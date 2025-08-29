@@ -2,9 +2,7 @@ package br.com.futebol.presentation.wicket;
 
 import br.com.futebol.application.dto.JogoDTO;
 import br.com.futebol.application.service.JogoService;
-import br.com.futebol.infrastructure.repository.JogoRepository;
-import br.com.futebol.infrastructure.cache.RedisService;
-import br.com.futebol.infrastructure.messaging.RabbitMQService;
+import br.com.futebol.infrastructure.util.CDIProvider;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -32,27 +30,16 @@ public class NovoJogoPage extends WebPage {
 
     private JogoDTO jogoDTO;
     
-    // Serviço de jogos com dependências configuradas
+    // Serviço de jogos obtido via CDI
     private final JogoService jogoService;
 
     public NovoJogoPage(final PageParameters parameters) {
         super(parameters);
         
-        // Configurar dependências manualmente (solução temporária até CDI funcionar)
-        try {
-            // Criar instâncias das dependências
-            JogoRepository jogoRepository = new JogoRepository();
-            RedisService redisService = new RedisService();
-            RabbitMQService rabbitMQService = new RabbitMQService();
-            
-            // Criar o serviço usando o construtor público
-            this.jogoService = new JogoService(jogoRepository, rabbitMQService, redisService);
-            
-            System.out.println("Dependências configuradas manualmente");
-            
-        } catch (Exception e) {
-            System.err.println("Erro ao configurar dependências: " + e.getMessage());
-            throw new RuntimeException("Falha ao inicializar página", e);
+        // Obter instância do JogoService via CDI
+        this.jogoService = CDIProvider.getInstance(JogoService.class);
+        if (this.jogoService == null) {
+            throw new RuntimeException("Não foi possível obter instância do JogoService");
         }
         
         jogoDTO = new JogoDTO();

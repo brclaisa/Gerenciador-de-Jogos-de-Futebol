@@ -1,0 +1,31 @@
+# Script CLI para configurar o datasource PostgreSQL no WildFly
+# Execute este script no console de administração do WildFly
+
+# Adicionar driver PostgreSQL
+/subsystem=datasources/jdbc-driver=postgresql:add(driver-name=postgresql,driver-module-name=org.postgresql,driver-class-name=org.postgresql.Driver)
+
+# Criar datasource PostgreSQL
+/subsystem=datasources/data-source=PostgreSQLDS:add(
+    jndi-name=java:jboss/datasources/PostgreSQLDS,
+    driver-name=postgresql,
+    connection-url=jdbc:postgresql://futebol_postgres:5432/futebol_db,
+    user-name=futebol_user,
+    password=futebol_pass,
+    min-pool-size=5,
+    max-pool-size=20,
+    pool-prefill=true,
+    pool-use-strict-min=true,
+    validate-on-match=true,
+    background-validation=true,
+    background-validation-millis=60000,
+    check-valid-connection-sql=SELECT 1
+)
+
+# Habilitar o datasource
+/subsystem=datasources/data-source=PostgreSQLDS:enable
+
+# Verificar configuração
+/subsystem=datasources/data-source=PostgreSQLDS:read-resource
+
+# Recarregar configuração
+:reload
