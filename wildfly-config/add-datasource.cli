@@ -1,0 +1,11 @@
+# Adicionar driver PostgreSQL
+/subsystem=datasources/jdbc-driver=postgresql:add(driver-name=postgresql,driver-module-name=org.postgresql,driver-class-name=org.postgresql.Driver)
+
+# Criar datasource PostgreSQL
+/subsystem=datasources/data-source=PostgreSQLDS:add(jndi-name=java:jboss/datasources/PostgreSQLDS,driver-name=postgresql,connection-url=jdbc:postgresql://futebol_postgres:5432/futebol_db,user-name=futebol_user,password=futebol_pass,min-pool-size=5,max-pool-size=20)
+
+# Habilitar datasource
+/subsystem=datasources/data-source=PostgreSQLDS:enable
+
+# Reload para aplicar as mudanças
+:reload

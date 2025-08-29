@@ -49,6 +49,23 @@ public class JogoService {
     private RedisService redisService;
 
     /**
+     * Construtor padrão para CDI
+     */
+    public JogoService() {
+        // CDI irá injetar as dependências
+    }
+
+    /**
+     * Construtor público para instanciação manual (usado quando CDI não funciona)
+     */
+    public JogoService(JogoRepository jogoRepository, RabbitMQService rabbitMQService, RedisService redisService) {
+        this.jogoRepository = jogoRepository;
+        this.rabbitMQService = rabbitMQService;
+        this.redisService = redisService;
+        LOGGER.info("JogoService inicializado manualmente com dependências");
+    }
+
+    /**
      * Cria um novo jogo.
      * 
      * <p>Valida os dados do jogo, persiste no banco de dados,

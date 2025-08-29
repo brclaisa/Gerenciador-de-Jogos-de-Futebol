@@ -32,34 +32,27 @@ public class NovoJogoPage extends WebPage {
 
     private JogoDTO jogoDTO;
     
-    // Criar instâncias diretamente para evitar problemas de CDI
+    // Serviço de jogos com dependências configuradas
     private final JogoService jogoService;
 
     public NovoJogoPage(final PageParameters parameters) {
         super(parameters);
-
-        // Inicializar o serviço com suas dependências
-        JogoRepository jogoRepository = new JogoRepository();
-        RedisService redisService = new RedisService();
-        RabbitMQService rabbitMQService = new RabbitMQService();
         
-        this.jogoService = new JogoService();
-        // Usar reflection para injetar as dependências
+        // Configurar dependências manualmente (solução temporária até CDI funcionar)
         try {
-            java.lang.reflect.Field repoField = JogoService.class.getDeclaredField("jogoRepository");
-            repoField.setAccessible(true);
-            repoField.set(jogoService, jogoRepository);
+            // Criar instâncias das dependências
+            JogoRepository jogoRepository = new JogoRepository();
+            RedisService redisService = new RedisService();
+            RabbitMQService rabbitMQService = new RabbitMQService();
             
-            java.lang.reflect.Field redisField = JogoService.class.getDeclaredField("redisService");
-            redisField.setAccessible(true);
-            redisField.set(jogoService, redisService);
+            // Criar o serviço usando o construtor público
+            this.jogoService = new JogoService(jogoRepository, rabbitMQService, redisService);
             
-            java.lang.reflect.Field mqField = JogoService.class.getDeclaredField("rabbitMQService");
-            mqField.setAccessible(true);
-            mqField.set(jogoService, rabbitMQService);
+            System.out.println("Dependências configuradas manualmente");
+            
         } catch (Exception e) {
-            // Em caso de erro, usar apenas o repositório em memória
             System.err.println("Erro ao configurar dependências: " + e.getMessage());
+            throw new RuntimeException("Falha ao inicializar página", e);
         }
         
         jogoDTO = new JogoDTO();
