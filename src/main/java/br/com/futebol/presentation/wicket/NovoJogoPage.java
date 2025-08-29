@@ -71,8 +71,10 @@ public class NovoJogoPage extends WebPage {
         TextField<LocalDateTime> dataHoraField = new TextField<LocalDateTime>("dataHoraPartida", 
                 new PropertyModel<>(jogoDTO, "dataHoraPartida")) {
             @Override
+            @SuppressWarnings("unchecked")
             public <C> IConverter<C> getConverter(Class<C> type) {
                 if (LocalDateTime.class.isAssignableFrom(type)) {
+                    // Cast seguro pois sabemos que C é LocalDateTime neste contexto
                     return (IConverter<C>) new LocalDateTimeConverter();
                 }
                 return super.getConverter(type);
