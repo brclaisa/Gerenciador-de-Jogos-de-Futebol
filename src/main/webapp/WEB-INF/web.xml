@@ -46,6 +46,16 @@
         </auth-constraint>
     </security-constraint>
 
+    <!-- Configuração de Content Security Policy -->
+    <filter>
+        <filter-name>CSPFilter</filter-name>
+        <filter-class>br.com.futebol.infrastructure.filter.CSPFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CSPFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <!-- Configuração de mime-types -->
     <mime-mapping>
         <extension>json</extension>
