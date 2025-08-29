@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * @since 2024-01-01
  */
 @ApplicationScoped
-public final class JogoService {
+public class JogoService {
 
     /** Logger para esta classe. */
     private static final Logger LOGGER = LoggerFactory.getLogger(JogoService.class);

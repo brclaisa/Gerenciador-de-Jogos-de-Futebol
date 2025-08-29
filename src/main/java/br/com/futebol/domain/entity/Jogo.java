@@ -1,7 +1,6 @@
 package br.com.futebol.domain.entity;
 
 import br.com.futebol.domain.enums.StatusJogo;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Min;
@@ -19,51 +18,38 @@ import java.util.Objects;
  * @version 1.0.0
  * @since 2024-01-01
  */
-@Entity
-@Table(name = "jogos")
 public final class Jogo {
 
     /** Identificador único do jogo. */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /** Nome do primeiro time (Time A). */
     @NotBlank(message = "Nome do time A é obrigatório")
-    @Column(name = "time_a", nullable = false, length = 100)
     private String timeA;
 
     /** Nome do segundo time (Time B). */
     @NotBlank(message = "Nome do time B é obrigatório")
-    @Column(name = "time_b", nullable = false, length = 100)
     private String timeB;
 
     /** Placar atual do time A. */
     @Min(value = 0, message = "Placar do time A não pode ser negativo")
-    @Column(name = "placar_a", nullable = false)
     private Integer placarA = 0;
 
     /** Placar atual do time B. */
     @Min(value = 0, message = "Placar do time B não pode ser negativo")
-    @Column(name = "placar_b", nullable = false)
     private Integer placarB = 0;
 
     /** Status atual do jogo. */
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, length = 20)
     private StatusJogo status = StatusJogo.EM_ANDAMENTO;
 
     /** Data e hora programada para a partida. */
     @NotNull(message = "Data e hora da partida é obrigatória")
-    @Column(name = "data_hora_partida", nullable = false)
     private LocalDateTime dataHoraPartida;
 
     /** Data e hora de criação do registro. */
-    @Column(name = "data_criacao", nullable = false)
     private LocalDateTime dataCriacao;
 
     /** Data e hora da última atualização. */
-    @Column(name = "data_atualizacao")
     private LocalDateTime dataAtualizacao;
 
     /**

@@ -27,7 +27,7 @@ import java.util.Optional;
  * @since 2024-01-01
  */
 @ApplicationScoped
-public final class RedisService {
+public class RedisService {
 
     /** Logger para esta classe. */
     private static final Logger LOGGER = LoggerFactory.getLogger(RedisService.class);
