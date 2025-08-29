@@ -93,69 +93,210 @@ src/
 └── test/                        # Testes unitários
 ```
 
+## 🔌 API REST
+
+### Endpoints Disponíveis
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| `POST` | `/api/jogos` | Criar novo jogo |
+| `GET` | `/api/jogos` | Listar todos os jogos |
+| `GET` | `/api/jogos/{id}` | Buscar jogo por ID |
+| `PUT` | `/api/jogos/{id}/placar` | Atualizar placar |
+| `PUT` | `/api/jogos/{id}/status` | Alterar status do jogo |
+| `DELETE` | `/api/jogos/{id}` | Remover jogo |
+
+### Exemplos de Uso
+
+#### 1. Criar Novo Jogo
+```bash
+curl -X POST http://localhost:8080/gerenciador-jogos-1.0.0/api/jogos \
+  -H "Content-Type: application/json" \
+  -d '{
+    "timeA": "Flamengo",
+    "timeB": "Palmeiras",
+    "dataHoraPartida": "15/01/2024 20:30"
+  }'
+```
+
+**Resposta de Sucesso:**
+```json
+{
+  "id": 1,
+  "timeA": "Flamengo",
+  "timeB": "Palmeiras",
+  "placarA": 0,
+  "placarB": 0,
+  "status": "EM_ANDAMENTO",
+  "dataHoraPartida": "2024-01-15T20:30:00",
+  "dataCriacao": "2024-08-29T00:10:00",
+  "dataAtualizacao": "2024-08-29T00:10:00"
+}
+```
+
+#### 2. Listar Todos os Jogos
+```bash
+curl -X GET http://localhost:8080/gerenciador-jogos-1.0.0/api/jogos
+```
+
+**Resposta:**
+```json
+[
+  {
+    "id": 1,
+    "timeA": "Flamengo",
+    "timeB": "Palmeiras",
+    "placarA": 0,
+    "placarB": 0,
+    "status": "EM_ANDAMENTO",
+    "dataHoraPartida": "2024-01-15T20:30:00"
+  }
+]
+```
+
+#### 3. Buscar Jogo por ID
+```bash
+curl -X GET http://localhost:8080/gerenciador-jogos-1.0.0/api/jogos/1
+```
+
+#### 4. Atualizar Placar
+```bash
+curl -X PUT http://localhost:8080/gerenciador-jogos-1.0.0/api/jogos/1/placar \
+  -H "Content-Type: application/json" \
+  -d '{
+    "placarA": 2,
+    "placarB": 1
+  }'
+```
+
+**Resposta:**
+```json
+{
+  "id": 1,
+  "timeA": "Flamengo",
+  "timeB": "Palmeiras",
+  "placarA": 2,
+  "placarB": 1,
+  "status": "EM_ANDAMENTO",
+  "dataHoraPartida": "2024-01-15T20:30:00"
+}
+```
+
+#### 5. Encerrar Jogo
+```bash
+curl -X PUT "http://localhost:8080/gerenciador-jogos-1.0.0/api/jogos/1/status?status=ENCERRADO"
+```
+
+**Resposta:**
+```json
+{
+  "id": 1,
+  "timeA": "Flamengo",
+  "timeB": "Palmeiras",
+  "placarA": 2,
+  "placarB": 1,
+  "status": "ENCERRADO",
+  "dataHoraPartida": "2024-01-15T20:30:00"
+}
+```
+
+#### 6. Remover Jogo
+```bash
+curl -X DELETE http://localhost:8080/gerenciador-jogos-1.0.0/api/jogos/1
+```
+
+### Testando com JavaScript/Fetch
+
+```javascript
+// Criar novo jogo
+const criarJogo = async () => {
+  const response = await fetch('http://localhost:8080/gerenciador-jogos-1.0.0/api/jogos', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      timeA: 'Flamengo',
+      timeB: 'Palmeiras',
+      dataHoraPartida: '15/01/2024 20:30'
+    })
+  });
+  
+  const jogo = await response.json();
+  console.log('Jogo criado:', jogo);
+};
+
+// Listar jogos
+const listarJogos = async () => {
+  const response = await fetch('http://localhost:8080/gerenciador-jogos-1.0.0/api/jogos');
+  const jogos = await response.json();
+  console.log('Jogos:', jogos);
+};
+```
+
+### Testando com Python/Requests
+
+```python
+import requests
+
+# URL base da API
+base_url = "http://localhost:8080/gerenciador-jogos-1.0.0/api"
+
+# Criar novo jogo
+def criar_jogo():
+    dados = {
+        "timeA": "Flamengo",
+        "timeB": "Palmeiras",
+        "dataHoraPartida": "15/01/2024 20:30"
+    }
+    
+    response = requests.post(f"{base_url}/jogos", json=dados)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print(f"Erro: {response.status_code}")
+        return None
+
+# Listar todos os jogos
+def listar_jogos():
+    response = requests.get(f"{base_url}/jogos")
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print(f"Erro: {response.status_code}")
+        return None
+
+# Testar a API
+if __name__ == "__main__":
+    # Criar jogo
+    jogo = criar_jogo()
+    if jogo:
+        print(f"Jogo criado com ID: {jogo['id']}")
+    
+    # Listar jogos
+    jogos = listar_jogos()
+    if jogos:
+        print(f"Total de jogos: {len(jogos)}")
+```
+
+### Códigos de Status HTTP
+
+| Código | Descrição |
+|--------|-----------|
+| `200` | Sucesso - Operação realizada com sucesso |
+| `201` | Criado - Recurso criado com sucesso |
+| `400` | Bad Request - Dados inválidos |
+| `404` | Not Found - Recurso não encontrado |
+| `409` | Conflict - Conflito na operação |
+| `500` | Internal Server Error - Erro interno do servidor |
+
+### Validações da API
+
+- **Time A e B**: Obrigatórios, mínimo 2 caracteres, máximo 100
+- **Data/Hora**: Formato obrigatório: `dd/MM/yyyy HH:mm`
+- **Placar**: Números inteiros não negativos
+- **Status**: Valores válidos: `EM_ANDAMENTO`, `ENCERRADO`
+
 ## 🐳 Comandos Docker Úteis
 
-```bash
-# Iniciar serviços
-docker-compose up -d
-
-# Ver logs
-docker-compose logs -f wildfly
-
-# Parar serviços
-docker-compose down
-
-# Verificar status
-docker ps
 ```
-
-## ⚙️ Configurações
-
-### Variáveis de Ambiente
-
-As configurações podem ser alteradas através de variáveis de ambiente:
-
-```properties
-# Aplicação
-app.name=Gerenciador de Jogos de Futebol
-app.version=1.0.0
-
-# RabbitMQ
-rabbitmq.host=localhost
-rabbitmq.port=5672
-rabbitmq.username=guest
-rabbitmq.password=guest
-
-# Redis
-redis.host=localhost
-redis.port=6379
-redis.password=
-
-# WildFly
-wildfly.port=8080
-wildfly.management.port=9990
-```
-
-### Configurações do Docker Compose
-
-```yaml
-# docker-compose.yml
-version: '3.8'
-services:
-  wildfly:
-    ports:
-      - "8080:8080"      # Porta da aplicação
-      - "9990:9990"      # Porta de gerenciamento
-  
-  rabbitmq:
-    ports:
-      - "5672:5672"      # Porta AMQP
-      - "15672:15672"    # Porta de gerenciamento
-  
-  redis:
-    ports:
-      - "6379:6379"      # Porta Redis
-```
-
----
-
