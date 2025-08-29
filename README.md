@@ -1,20 +1,10 @@
 # Gerenciador de Jogos de Futebol
 
-Sistema completo de gerenciamento de partidas de futebol com atualizações em tempo real, desenvolvido em Java com arquitetura limpa e moderna.
-
-## 🚀 Características
-
-- **CRUD Completo**: Criação, leitura, atualização e remoção de jogos
-- **Atualizações em Tempo Real**: Eventos publicados no RabbitMQ e cache no Redis
-- **Interface Web Moderna**: Apache Wicket com design responsivo
-- **API REST**: Endpoints completos para integração
-- **Arquitetura Limpa**: Separação clara de responsabilidades
-- **Docker Compose**: Orquestração completa dos serviços
-- **Content Security Policy**: Configuração segura de CSP
+Sistema de gerenciamento de partidas de futebol, desenvolvido em Java 21.
 
 ## 🏗️ Arquitetura
 
-O projeto segue os princípios da **Arquitetura Limpa (Clean Architecture)** com as seguintes camadas:
+O projeto segue os princípios **Clean Architecture** com as seguintes camadas:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -45,52 +35,47 @@ O projeto segue os princípios da **Arquitetura Limpa (Clean Architecture)** com
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## 🛠️ Tecnologias Utilizadas
+## 🛠️ Tecnologias
 
-- **Java 21** - Linguagem principal (LTS mais recente)
+- **Java 21** - Linguagem principal
 - **Jakarta EE 10** - Plataforma empresarial
 - **Apache Wicket 10** - Framework web
 - **RabbitMQ 5.18** - Message broker
 - **Redis 7** - Cache em memória
-- **WildFly 37.0.0** - Servidor de aplicação Jakarta EE
+- **WildFly 37.0.0** - Servidor de aplicação
 - **Maven 3.11** - Gerenciador de dependências
 - **Docker Compose** - Orquestração de containers
 
 ## 📋 Pré-requisitos
 
-- **Java 21** ou superior (recomendado)
+- Java 21 ou superior
 - Maven 3.8+
 - Docker e Docker Compose
 - Git
 
-## 🚀 Como Executar
+## 🚀 Instalação
 
 ### 1. Clone o Repositório
-
 ```bash
 git clone <url-do-repositorio>
 cd projeto2
 ```
 
 ### 2. Compile o Projeto
-
 ```bash
 mvn clean package
 ```
 
 ### 3. Execute com Docker Compose
-
 ```bash
 docker-compose up -d
 ```
 
 ### 4. Acesse a Aplicação
-
-- **Interface Web (Apache Wicket)**: http://localhost:8080/gerenciador-jogos-1.0.0/
+- **Interface Web**: http://localhost:8080/gerenciador-jogos-1.0.0/
 - **API REST**: http://localhost:8080/gerenciador-jogos-1.0.0/api/jogos
 - **WildFly Management**: http://localhost:9990
 - **RabbitMQ Management**: http://localhost:15672
-- **Redis**: localhost:6379
 
 ## 📚 Estrutura do Projeto
 
@@ -99,157 +84,36 @@ src/
 ├── main/
 │   ├── java/
 │   │   └── br/com/futebol/
-│   │       ├── domain/           # Camada de domínio
-│   │       │   ├── entity/       # Entidades JPA
-│   │       │   └── enums/        # Enums do domínio
-│   │       ├── application/      # Camada de aplicação
-│   │       │   ├── dto/          # DTOs de transferência
-│   │       │   └── service/      # Serviços de aplicação
-│   │       ├── infrastructure/   # Camada de infraestrutura
-│   │       │   ├── repository/   # Repositórios em memória
-│   │       │   ├── rest/         # Controladores REST
-│   │       │   ├── messaging/    # Serviços de mensageria
-│   │       │   ├── cache/        # Serviços de cache
-│   │       │   └── filter/       # Filtros de segurança
-│   │       └── presentation/     # Camada de apresentação
-│   │           └── wicket/       # Páginas Wicket
-│   ├── resources/                # Recursos da aplicação
-│   │   ├── META-INF/            # Configurações da aplicação
-│   │   ├── application.properties # Configurações da aplicação
-│   │   └── logging.properties   # Configuração de logging
+│   │       ├── domain/           # Entidades e regras de negócio
+│   │       ├── application/      # Serviços e DTOs
+│   │       ├── infrastructure/   # Repositórios, REST e mensageria
+│   │       └── presentation/     # Interface Wicket
+│   ├── resources/                # Configurações
 │   └── webapp/                  # Arquivos web estáticos
-│       ├── css/                 # Estilos CSS externos
-│       └── WEB-INF/            # Configurações web
-├── test/                        # Testes unitários (estrutura preparada)
-└── wildfly-config/              # Configurações do WildFly
+└── test/                        # Testes unitários
 ```
 
-## 🔌 API REST
-
-### Endpoints Principais
-
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| `POST` | `/api/jogos` | Criar novo jogo |
-| `GET` | `/api/jogos` | Listar todos os jogos |
-| `GET` | `/api/jogos/{id}` | Buscar jogo por ID |
-| `PUT` | `/api/jogos/{id}/placar` | Atualizar placar |
-| `PUT` | `/api/jogos/{id}/status` | Alterar status |
-| `DELETE` | `/api/jogos/{id}` | Remover jogo |
-
-### Exemplos de Uso
-
-#### Criar Novo Jogo
-```bash
-curl -X POST http://localhost:8080/gerenciador-jogos-1.0.0/api/jogos \
-  -H "Content-Type: application/json" \
-  -d '{
-    "timeA": "Flamengo",
-    "timeB": "Palmeiras",
-    "dataHoraPartida": "2024-01-15T20:00:00"
-  }'
-```
-
-#### Atualizar Placar
-```bash
-curl -X PUT http://localhost:8080/gerenciador-jogos-1.0.0/api/jogos/1/placar \
-  -H "Content-Type: application/json" \
-  -d '{
-    "placarA": 2,
-    "placarB": 1
-  }'
-```
-
-#### Encerrar Jogo
-```bash
-curl -X PUT "http://localhost:8080/gerenciador-jogos-1.0.0/api/jogos/1/status?status=ENCERRADO"
-```
-
-## 🎯 Funcionalidades
-
-### 1. Cadastro e Gerenciamento de Jogos
-- ✅ Criação de novos jogos
-- ✅ Atualização de informações
-- ✅ Consulta por status
-- ✅ Listagem com filtros
-- ✅ Remoção de jogos
-
-### 2. Atualizações em Tempo Real
-- ✅ Eventos publicados no RabbitMQ
-- ✅ Cache de placares no Redis
-- ✅ Notificações automáticas
-
-### 3. Interface Web (Apache Wicket)
-- ✅ Criação de partidas
-- ✅ Alteração de placares
-- ✅ Encerramento de jogos
-- ✅ Listagem organizada
-- ✅ Design responsivo
-- ✅ Estilos CSS externos
-
-### 4. Backend Robusto
-- ✅ API REST completa
-- ✅ Persistência em memória
-- ✅ Validações e tratamento de erros
-- ✅ Logging estruturado
-
-## 🔒 Segurança e CSP
-
-### Content Security Policy (CSP)
-
-O projeto implementa uma política de segurança robusta:
-
-- **Filtro CSP Personalizado**: `CSPFilter.java` para configuração flexível
-- **Estilos CSS Externos**: Arquivo `styles.css` separado para melhor segurança
-- **Configuração WildFly**: CSP automático com nonces dinâmicos
-- **Proteção contra XSS**: Bloqueio de scripts inline não autorizados
-
-### Configurações de Segurança
-
-```xml
-<!-- web.xml -->
-<filter>
-    <filter-name>CSPFilter</filter-name>
-    <filter-class>br.com.futebol.infrastructure.filter.CSPFilter</filter-class>
-</filter>
-```
-
-## 🐳 Docker
-
-### Serviços Disponíveis
-
-- **WildFly**: Servidor de aplicação Jakarta EE
-- **RabbitMQ**: Message broker para eventos
-- **Redis**: Cache em memória
-- **PostgreSQL**: Banco de dados (configurado para uso futuro)
-
-### Comandos Úteis
+## 🐳 Comandos Docker Úteis
 
 ```bash
-# Iniciar todos os serviços
+# Iniciar serviços
 docker-compose up -d
 
-# Ver logs de um serviço específico
+# Ver logs
 docker-compose logs -f wildfly
 
-# Parar todos os serviços
+# Parar serviços
 docker-compose down
 
-# Reconstruir e reiniciar
-docker-compose up -d --build
-
-# Limpar volumes (cuidado!)
-docker-compose down -v
-
-# Verificar status dos containers
+# Verificar status
 docker ps
 ```
 
-## 🔧 Configuração
+## ⚙️ Configurações
 
 ### Variáveis de Ambiente
 
-As configurações podem ser alteradas através de variáveis de ambiente ou arquivos de propriedades:
+As configurações podem ser alteradas através de variáveis de ambiente:
 
 ```properties
 # Aplicação
@@ -266,183 +130,32 @@ rabbitmq.password=guest
 redis.host=localhost
 redis.port=6379
 redis.password=
+
+# WildFly
+wildfly.port=8080
+wildfly.management.port=9990
 ```
 
-### Configurações do WildFly
+### Configurações do Docker Compose
 
-```xml
-<!-- jboss-deployment-structure.xml -->
-<module name="org.slf4j" slot="main"/>
-<module name="org.apache.commons.logging" slot="main"/>
+```yaml
+# docker-compose.yml
+version: '3.8'
+services:
+  wildfly:
+    ports:
+      - "8080:8080"      # Porta da aplicação
+      - "9990:9990"      # Porta de gerenciamento
+  
+  rabbitmq:
+    ports:
+      - "5672:5672"      # Porta AMQP
+      - "15672:15672"    # Porta de gerenciamento
+  
+  redis:
+    ports:
+      - "6379:6379"      # Porta Redis
 ```
-
-## 🧪 Testes
-
-### Status dos Testes
-
-✅ **Compilação**: Sucesso  
-✅ **Empacotamento**: Sucesso  
-✅ **Validação Maven**: Sucesso  
-✅ **Type Safety**: Corrigido (warnings resolvidos)  
-⚠️ **Checkstyle**: 830 violações (qualidade de código)  
-
-### Executar Testes
-
-```bash
-# Compilar o projeto
-mvn clean compile
-
-# Executar testes unitários
-mvn test
-
-# Empacotar em WAR
-mvn package
-
-# Verificar qualidade do código
-mvn checkstyle:check
-```
-
-### Cobertura de Código
-
-```bash
-mvn jacoco:report
-```
-
-## 📊 Monitoramento
-
-### Health Checks
-
-- **Aplicação**: http://localhost:8080/gerenciador-jogos-1.0.0/
-- **WildFly**: Verificação automática no Docker
-- **RabbitMQ**: Verificação automática no Docker
-- **Redis**: Verificação automática no Docker
-
-### Logs
-
-Os logs são configurados para:
-- Console (desenvolvimento)
-- Arquivo rotativo (produção)
-- Níveis configuráveis por pacote
-
-### Métricas
-
-- Contadores de jogos por status
-- Estatísticas de uso
-- Performance de queries
-
-## 🚀 Deploy
-
-### Desenvolvimento
-
-```bash
-# Compilar e executar
-mvn clean compile
-mvn package
-```
-
-### Produção
-
-```bash
-# Build do WAR
-mvn clean package
-
-# Deploy no WildFly
-cp target/gerenciador-jogos-1.0.0.war $WILDFLY_HOME/standalone/deployments/
-```
-
-### Docker
-
-```bash
-# Build da imagem
-docker build -t futebol-app .
-
-# Executar container
-docker run -p 8080:8080 futebol-app
-```
-
-## 🔍 Qualidade do Código
-
-### Status Atual
-
-O projeto está **funcionalmente correto** e pronto para uso, com melhorias recentes implementadas:
-
-- ✅ **Type Safety**: Warnings de cast resolvidos
-- ✅ **Content Security Policy**: Configuração segura implementada
-- ✅ **Estrutura de CSS**: Estilos organizados em arquivo externo
-- ⚠️ **Checkstyle**: 830 violações (qualidade de código)
-
-### Melhorias Implementadas
-
-1. ✅ **Type Safety**: Resolvido warning de cast inseguro em `NovoJogoPage.java`
-2. ✅ **CSP**: Filtro de segurança implementado
-3. ✅ **CSS**: Estilos organizados em arquivo externo
-4. ✅ **Deploy**: Processo automatizado e documentado
-
-### Melhorias Recomendadas
-
-1. **Documentação**: Adicionar Javadoc completo
-2. **Formatação**: Corrigir espaçamento e quebras de linha
-3. **Padrões**: Seguir convenções Java
-4. **Testes**: Implementar testes unitários
-
-## 🤝 Contribuição
-
-1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
-
-## 📝 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-
-## 🆘 Suporte
-
-- **Issues**: Use o sistema de issues do GitHub
-- **Documentação**: Consulte este README e os comentários no código
-- **Comunidade**: Participe das discussões e contribuições
-
-## 🔮 Roadmap
-
-- [x] **Corrigir warnings de Type Safety**
-- [x] **Implementar Content Security Policy**
-- [x] **Organizar estilos CSS externos**
-- [ ] **Corrigir violações de Checkstyle**
-- [ ] **Implementar testes unitários**
-- [ ] **Autenticação e autorização**
-- [ ] **API GraphQL**
-- [ ] **WebSockets para atualizações em tempo real**
-- [ ] **Dashboard administrativo**
-- [ ] **Relatórios e estatísticas avançadas**
-- [ ] **Integração com APIs externas**
-- [ ] **Testes de performance**
-- [ ] **CI/CD pipeline**
-
-## 📈 Status do Projeto
-
-| Aspecto | Status | Observações |
-|---------|--------|-------------|
-| **Compilação** | ✅ Funcionando | Java 21, Maven 3.11 |
-| **Empacotamento** | ✅ Funcionando | WAR gerado com sucesso |
-| **Funcionalidade** | ✅ Funcionando | Todas as features implementadas |
-| **Type Safety** | ✅ Corrigido | Warnings resolvidos |
-| **CSP** | ✅ Implementado | Segurança configurada |
-| **Qualidade** | ⚠️ Melhorias necessárias | 830 violações de Checkstyle |
-| **Deploy** | ✅ Pronto | Docker Compose configurado |
-| **Documentação** | ✅ Atualizada | README completo |
-
-## 🆕 Últimas Atualizações
-
-### Agosto 2024
-- ✅ **Type Safety**: Corrigido warning de cast em `NovoJogoPage.java`
-- ✅ **Content Security Policy**: Implementado filtro de segurança
-- ✅ **CSS**: Estilos organizados em arquivo externo
-- ✅ **Deploy**: Processo automatizado e documentado
-- ✅ **README**: Documentação atualizada e completa
 
 ---
 
-**Desenvolvido com ❤️ em Java 21**
-
-*Última atualização: Agosto 2024*
