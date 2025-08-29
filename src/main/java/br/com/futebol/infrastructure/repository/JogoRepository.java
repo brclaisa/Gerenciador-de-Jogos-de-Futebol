@@ -23,9 +23,35 @@ public class JogoRepository {
     private EntityManager entityManager;
 
     /**
+     * Construtor para inicializar EntityManager quando CDI falhar
+     */
+    public JogoRepository() {
+        inicializarEntityManager();
+    }
+
+    /**
+     * Inicializa o EntityManager manualmente se necessário
+     */
+    private void inicializarEntityManager() {
+        if (entityManager == null) {
+            try {
+                // Criar EntityManager manualmente usando Hibernate
+                jakarta.persistence.EntityManagerFactory emf = 
+                    jakarta.persistence.Persistence.createEntityManagerFactory("futebolPU");
+                this.entityManager = emf.createEntityManager();
+                System.out.println("EntityManager inicializado manualmente - CDI não funcionou");
+            } catch (Exception e) {
+                System.err.println("Erro ao inicializar EntityManager: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
      * Salva um novo jogo
      */
     public Jogo salvar(Jogo jogo) {
+        inicializarEntityManager();
         if (jogo.getId() == null) {
             entityManager.persist(jogo);
         } else {
@@ -38,6 +64,7 @@ public class JogoRepository {
      * Atualiza um jogo existente
      */
     public Jogo atualizar(Jogo jogo) {
+        inicializarEntityManager();
         return entityManager.merge(jogo);
     }
 
@@ -53,6 +80,7 @@ public class JogoRepository {
      * Lista todos os jogos
      */
     public List<Jogo> listarTodos() {
+        inicializarEntityManager();
         TypedQuery<Jogo> query = entityManager.createQuery(
             "SELECT j FROM Jogo j ORDER BY j.dataHoraPartida DESC", Jogo.class);
         return query.getResultList();
