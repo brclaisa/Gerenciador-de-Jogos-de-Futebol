@@ -17,7 +17,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
- * Controlador REST para operações de jogos de futebol
+ * Controlador REST que expõe as operações de jogos via API.
+ * 
+ * Aqui ficam os endpoints HTTP que outras aplicações podem
+ * usar pra criar, listar e gerenciar jogos de futebol.
  */
 @Path("/jogos")
 @Produces(MediaType.APPLICATION_JSON)
@@ -31,7 +34,10 @@ public class JogoRestController {
     private JogoService jogoService;
 
     /**
-     * POST /jogos - Criar um novo jogo
+     * POST /jogos - Criar um novo jogo.
+     * 
+     * Endpoint que recebe os dados de um jogo e cria
+     * no sistema. Valida os dados antes de salvar.
      */
     @POST
     public Response criarJogo(@Valid JogoDTO jogoDTO) {
@@ -53,7 +59,10 @@ public class JogoRestController {
     }
 
     /**
-     * GET /jogos - Listar jogos (com filtros opcionais)
+     * GET /jogos - Listar jogos (com filtros opcionais).
+     * 
+     * Endpoint que retorna a lista de jogos. Pode filtrar
+     * por status ou período de datas.
      */
     @GET
     public Response listarJogos(

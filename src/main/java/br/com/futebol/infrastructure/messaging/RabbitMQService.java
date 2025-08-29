@@ -16,7 +16,11 @@ import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 /**
- * Serviço para integração com RabbitMQ
+ * Serviço que cuida da mensageria com RabbitMQ.
+ * 
+ * Uso o RabbitMQ pra enviar eventos quando algo importante
+ * acontece: jogo criado, placar atualizado, jogo encerrado.
+ * É tipo um "sistema de notificações" da aplicação.
  */
 @ApplicationScoped
 public class RabbitMQService {
@@ -44,15 +48,15 @@ public class RabbitMQService {
             connection = factory.newConnection();
             channel = connection.createChannel();
 
-            // Declarar exchange
+            // Criar o exchange (tipo um "roteador" de mensagens)
             channel.exchangeDeclare(EXCHANGE_NAME, "topic", true);
 
-            // Declarar filas
+            // Criar as filas onde as mensagens ficam guardadas
             channel.queueDeclare(QUEUE_PLACAR_ATUALIZADO, true, false, false, null);
             channel.queueDeclare(QUEUE_JOGO_CRIADO, true, false, false, null);
             channel.queueDeclare(QUEUE_JOGO_ENCERRADO, true, false, false, null);
 
-            // Binding das filas com o exchange
+            // Conectar as filas com o exchange (roteamento)
             channel.queueBind(QUEUE_PLACAR_ATUALIZADO, EXCHANGE_NAME, "jogo.placar.atualizado");
             channel.queueBind(QUEUE_JOGO_CRIADO, EXCHANGE_NAME, "jogo.criado");
             channel.queueBind(QUEUE_JOGO_ENCERRADO, EXCHANGE_NAME, "jogo.encerrado");
@@ -65,21 +69,21 @@ public class RabbitMQService {
     }
 
     /**
-     * Publica evento de placar atualizado
+     * Publica evento quando alguém atualiza o placar.
      */
     public void publicarPlacarAtualizado(JogoDTO jogo) {
         publicarEvento("jogo.placar.atualizado", jogo);
     }
 
     /**
-     * Publica evento de jogo criado
+     * Publica evento quando um novo jogo é criado.
      */
     public void publicarJogoCriado(JogoDTO jogo) {
         publicarEvento("jogo.criado", jogo);
     }
 
     /**
-     * Publica evento de jogo encerrado
+     * Publica evento quando um jogo é encerrado.
      */
     public void publicarJogoEncerrado(JogoDTO jogo) {
         publicarEvento("jogo.encerrado", jogo);

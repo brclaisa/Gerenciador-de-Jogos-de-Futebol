@@ -16,7 +16,10 @@ import java.util.ArrayList;
 import java.sql.*;
 
 /**
- * Página para listar todos os jogos
+ * Página que mostra todos os jogos cadastrados no sistema.
+ * 
+ * Aqui o usuário pode ver todos os jogos, independente do status.
+ * É tipo um "catálogo completo" de partidas.
  */
 public class TodosJogosPage extends WebPage {
 
@@ -28,10 +31,10 @@ public class TodosJogosPage extends WebPage {
         // Título da página
         add(new Label("titulo", "Todos os Jogos"));
 
-        // Obter instância do JogoService via CDI
+        // Tentar obter o serviço via CDI (injeção de dependência)
         final Object jogoService = obterJogoService();
 
-        // Lista de todos os jogos (dados reais do banco)
+        // Lista de todos os jogos - busca dados reais do banco
         add(new ListView<JogoDTO>("todosJogos", new LoadableDetachableModel<List<JogoDTO>>() {
             @Override
             protected List<JogoDTO> load() {
@@ -39,11 +42,12 @@ public class TodosJogosPage extends WebPage {
                     if (jogoService instanceof JogoService) {
                         return ((JogoService) jogoService).listarTodos();
                     } else {
-                        // Usar serviço simplificado
+                        // CDI falhou, usar o plano B (JDBC direto)
                         return carregarJogosSimplificado();
                     }
                 } catch (Exception e) {
                     System.err.println("Erro ao carregar jogos: " + e.getMessage());
+                    // Deu erro, tentar o plano B mesmo
                     return carregarJogosSimplificado();
                 }
             }
@@ -56,13 +60,13 @@ public class TodosJogosPage extends WebPage {
                 item.add(new Label("timeA", jogo.getTimeA()));
                 item.add(new Label("timeB", jogo.getTimeB()));
                 
-                // Placar
+                // Placar atual
                 item.add(new Label("placar", jogo.getPlacarA() + " x " + jogo.getPlacarB()));
                 
-                // Status
+                // Status do jogo (em andamento, encerrado, etc)
                 item.add(new Label("status", jogo.getStatus().toString()));
                 
-                // Data da partida
+                // Data e hora da partida
                 String dataFormatada = jogo.getDataHoraPartida() != null ? 
                     jogo.getDataHoraPartida().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")) : 
                     "N/A";
@@ -70,19 +74,22 @@ public class TodosJogosPage extends WebPage {
             }
         });
 
-        // Link de volta
+        // Botão de voltar pra página inicial
         add(new BookmarkablePageLink<Void>("linkVoltar", HomePage.class));
     }
     
     /**
-     * Obtém uma instância do JogoService
+     * Tenta obter o JogoService via CDI (injeção de dependência).
+     * 
+     * Se der certo, ótimo! Se der errado, retorna uma string
+     * que indica pra usar o plano B (JDBC direto).
      */
     private Object obterJogoService() {
         try {
             JogoService tempService = CDIProvider.getInstance(JogoService.class);
             if (tempService == null) {
                 System.err.println("CDI não funcionando, usando serviço simplificado");
-                // Fallback: usar serviço simplificado
+                // CDI falhou, marcar pra usar o plano B
                 return "SIMPLIFICADO";
             } else {
                 System.err.println("JogoService obtido via CDI com sucesso");
@@ -90,18 +97,21 @@ public class TodosJogosPage extends WebPage {
             }
         } catch (Exception e) {
             System.err.println("Erro ao obter JogoService: " + e.getMessage());
-            // Último recurso: usar serviço simplificado
+            // Deu erro, usar o plano B mesmo
             return "SIMPLIFICADO";
         }
     }
     
     /**
-     * Carrega jogos usando JDBC direto quando o CDI não funciona
+     * Plano B: carrega jogos usando JDBC direto quando o CDI não funciona.
+     * 
+     * É tipo um "backup" que conecta direto no banco sem passar
+     * pelo sistema de injeção de dependências.
      */
     private List<JogoDTO> carregarJogosSimplificado() {
         System.err.println("Carregando jogos via JDBC direto");
         try {
-            // Usar JDBC direto para conectar ao PostgreSQL
+            // Conectar direto no PostgreSQL (plano B)
             String url = "jdbc:postgresql://localhost:5432/futebol_db";
             String user = "futebol_user";
             String password = "futebol_pass";

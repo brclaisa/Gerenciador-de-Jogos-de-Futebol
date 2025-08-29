@@ -9,7 +9,10 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
- * Página para encerrar um jogo
+ * Página onde o usuário pode encerrar um jogo.
+ * 
+ * Por enquanto é só uma demonstração com dados mockados.
+ * Na implementação real, mudaria o status do jogo para "encerrado".
  */
 public class EncerrarJogoPage extends WebPage {
 
@@ -22,7 +25,7 @@ public class EncerrarJogoPage extends WebPage {
 
         Long jogoId = parameters.get("id").toLong();
 
-        // Para demonstração, criar dados mockados
+        // Por enquanto, criar dados mockados pra demonstração
         jogo = new JogoDTO();
         jogo.setId(jogoId);
         jogo.setTimeA("Time A");
@@ -35,7 +38,7 @@ public class EncerrarJogoPage extends WebPage {
         add(new Label("jogoInfo", jogo.getTimeA() + " vs " + jogo.getTimeB()));
         add(new Label("placarAtual", "Placar atual: " + jogo.getPlacarA() + " x " + jogo.getPlacarB()));
 
-        // Formulário de confirmação
+        // Formulário de confirmação para encerrar o jogo
         Form<Void> form = new Form<Void>("formEncerrarJogo") {
             @Override
             protected void onSubmit() {
@@ -43,7 +46,7 @@ public class EncerrarJogoPage extends WebPage {
                     // Em uma implementação real, aqui seria chamado o serviço
                     // jogoService.encerrarJogo(jogo.getId());
 
-                    // Redirecionar para a página principal com mensagem de sucesso
+                    // Deu certo! Redirecionar pra página inicial com mensagem de sucesso
                     setResponsePage(HomePage.class, new PageParameters().add("mensagem", "Jogo encerrado com sucesso!"));
 
                 } catch (Exception e) {

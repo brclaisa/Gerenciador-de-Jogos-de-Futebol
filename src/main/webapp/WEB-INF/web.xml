@@ -9,7 +9,7 @@
     <display-name>Gerenciador de Jogos de Futebol</display-name>
     <description>Sistema de gerenciamento de partidas de futebol com atualizações em tempo real</description>
 
-        <!-- Configuração do Wicket -->
+        <!-- Configuração do Wicket (framework web) -->
     <filter>
         <filter-name>wicket</filter-name>
         <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
@@ -26,12 +26,12 @@
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
 
-    <!-- Configuração de sessão -->
+    <!-- Configuração de sessão (tempo limite em minutos) -->
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
 
-    <!-- Configuração de segurança -->
+    <!-- Configuração de segurança (área administrativa protegida) -->
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>Secure Pages</web-resource-name>
@@ -42,7 +42,7 @@
         </auth-constraint>
     </security-constraint>
 
-    <!-- Configuração de Content Security Policy -->
+    <!-- Configuração de Content Security Policy (proteção contra XSS) -->
     <filter>
         <filter-name>CSPFilter</filter-name>
         <filter-class>br.com.futebol.infrastructure.filter.CSPFilter</filter-class>
@@ -52,13 +52,13 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-    <!-- Configuração de mime-types -->
+    <!-- Configuração de mime-types (extensões de arquivo) -->
     <mime-mapping>
         <extension>json</extension>
         <mime-type>application/json</mime-type>
     </mime-mapping>
 
-    <!-- Configuração de welcome-file -->
+    <!-- Configuração de welcome-file (página inicial padrão) -->
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>

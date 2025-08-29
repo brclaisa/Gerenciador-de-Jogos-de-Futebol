@@ -9,13 +9,13 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
- * Entidade que representa uma partida de futebol.
+ * Classe que representa uma partida de futebol no sistema.
  * 
- * <p>Esta classe encapsula todas as informações de uma partida,
- * incluindo times, placares, status e datas. Implementa regras
- * de negócio relacionadas ao ciclo de vida do jogo.</p>
+ * Aqui ficam todas as informações de um jogo: times, placares,
+ * status, datas, etc. É tipo o "molde" de como um jogo deve
+ * ser no banco de dados.
  * 
- * @author Sistema de Futebol
+ * @author Eu mesmo (desenvolvedor)
  * @version 1.0.0
  * @since 2024-01-01
  */
@@ -70,7 +70,8 @@ public final class Jogo {
     /**
      * Construtor padrão.
      * 
-     * <p>Inicializa a data de criação com o momento atual.</p>
+     * Inicializa a data de criação com o momento atual.
+     * Preciso disso pro JPA funcionar direito.
      */
     public Jogo() {
         this.dataCriacao = LocalDateTime.now();
@@ -91,7 +92,7 @@ public final class Jogo {
         this.dataHoraPartida = dataHoraPartida;
     }
 
-    // Getters e Setters
+    // Getters e Setters - padrão Java Bean
 
     /**
      * Obtém o identificador do jogo.

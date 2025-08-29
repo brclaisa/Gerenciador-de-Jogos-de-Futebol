@@ -8,21 +8,21 @@
     <persistence-unit name="futebolPU" transaction-type="JTA">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         
-        <!-- Configuração para WildFly -->
+        <!-- Configuração para WildFly (servidor de aplicação) -->
         <jta-data-source>java:jboss/datasources/PostgreSQLDS</jta-data-source>
         
-        <!-- Entidades -->
+        <!-- Entidades JPA (classes que representam tabelas) -->
         <class>br.com.futebol.domain.entity.Jogo</class>
         
-        <!-- Propriedades do Hibernate -->
+        <!-- Propriedades do Hibernate (ORM) -->
         <properties>
-            <!-- Configurações de conexão -->
+            <!-- Configurações de conexão com o banco -->
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
             <property name="hibernate.hbm2ddl.auto" value="validate"/>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
             
-            <!-- Configurações de performance -->
+            <!-- Configurações de performance (otimizações) -->
             <property name="hibernate.jdbc.batch_size" value="20"/>
             <property name="hibernate.order_inserts" value="true"/>
             <property name="hibernate.order_updates" value="true"/>

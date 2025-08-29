@@ -14,10 +14,10 @@ import java.util.List;
 /**
  * Página principal da aplicação de gerenciamento de jogos de futebol.
  *
- * <p>Esta página exibe o dashboard principal com links de navegação,
- * estatísticas básicas e listas de jogos em diferentes status.</p>
+ * É tipo o "centro de controle" da aplicação. Aqui o usuário
+ * vê um resumo geral e pode navegar para outras funcionalidades.
  *
- * @author Sistema de Futebol
+ * @author Eu mesmo (desenvolvedor)
  * @version 1.0.0
  * @since 2024-01-01
  */
@@ -28,11 +28,9 @@ public class HomePage extends WebPage {
     /**
      * Construtor da página principal.
      *
-     * <p>Inicializa todos os componentes da página, incluindo:
-     * - Título da aplicação
-     * - Links de navegação para outras páginas
-     * - Estatísticas básicas
-     * - Listas de jogos (mockadas temporariamente)</p>
+     * Inicializa todos os componentes da página: título,
+     * links de navegação, estatísticas e listas de jogos.
+     * Por enquanto as listas estão vazias (mockadas).
      *
      * @param parameters Parâmetros da página (pode ser null)
      */
@@ -42,7 +40,7 @@ public class HomePage extends WebPage {
         // Título da página
         add(new Label("titulo", "Gerenciador de Jogos de Futebol"));
 
-        // Links de navegação
+        // Links de navegação para outras páginas
         add(new BookmarkablePageLink<Void>("linkNovoJogo",
                 NovoJogoPage.class));
         add(new BookmarkablePageLink<Void>("linkJogosEmAndamento",
@@ -52,11 +50,11 @@ public class HomePage extends WebPage {
         add(new BookmarkablePageLink<Void>("linkTodosJogos",
                 TodosJogosPage.class));
 
-        // Estatísticas
+        // Estatísticas básicas (por enquanto fixas)
         add(new Label("estatisticas",
                 "Total: 0 | Em Andamento: 0 | Encerrados: 0"));
 
-        // Lista dos últimos jogos criados (dados mockados para demonstração)
+        // Lista dos últimos jogos criados (dados mockados por enquanto)
         add(new ListView<JogoDTO>("ultimosJogos",
                 new LoadableDetachableModel<List<JogoDTO>>() {
             @Override
@@ -71,7 +69,7 @@ public class HomePage extends WebPage {
             }
         });
 
-        // Lista de jogos em andamento (dados mockados para demonstração)
+        // Lista de jogos em andamento (dados mockados por enquanto)
         add(new ListView<JogoDTO>("jogosEmAndamento",
                 new LoadableDetachableModel<List<JogoDTO>>() {
             @Override

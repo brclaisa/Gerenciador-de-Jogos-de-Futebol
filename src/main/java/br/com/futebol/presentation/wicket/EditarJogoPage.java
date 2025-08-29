@@ -12,7 +12,10 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.validation.validator.StringValidator;
 
 /**
- * Página para editar um jogo existente
+ * Página onde o usuário pode editar um jogo existente.
+ * 
+ * Por enquanto é só uma demonstração com dados mockados.
+ * Na implementação real, permitiria editar times e outros dados.
  */
 public class EditarJogoPage extends WebPage {
 
@@ -25,7 +28,7 @@ public class EditarJogoPage extends WebPage {
 
         Long jogoId = parameters.get("id").toLong();
 
-        // Para demonstração, criar dados mockados
+        // Por enquanto, criar dados mockados pra demonstração
         jogo = new JogoDTO();
         jogo.setId(jogoId);
         jogo.setTimeA("Time A");
@@ -37,7 +40,7 @@ public class EditarJogoPage extends WebPage {
         add(new Label("titulo", "Editar Jogo"));
         add(new Label("jogoId", "ID: " + jogo.getId()));
 
-        // Formulário
+        // Formulário de edição
         Form<JogoDTO> form = new Form<JogoDTO>("formEditarJogo") {
             @Override
             protected void onSubmit() {
@@ -45,7 +48,7 @@ public class EditarJogoPage extends WebPage {
                     // Em uma implementação real, aqui seria chamado o serviço
                     // jogoService.atualizarJogo(jogo);
 
-                    // Redirecionar para a página principal com mensagem de sucesso
+                    // Deu certo! Redirecionar pra página inicial com mensagem de sucesso
                     setResponsePage(HomePage.class, new PageParameters().add("mensagem", "Jogo atualizado com sucesso!"));
 
                 } catch (Exception e) {
@@ -54,16 +57,16 @@ public class EditarJogoPage extends WebPage {
             }
         };
 
-        // Campos do formulário (somente leitura para demonstração)
+        // Campos do formulário (por enquanto só leitura pra demonstração)
         form.add(new TextField<String>("timeA", new PropertyModel<>(jogo, "timeA"))
                 .setRequired(true)
                 .add(StringValidator.lengthBetween(2, 100))
-                .setEnabled(false)); // Desabilitado para demonstração
+                .setEnabled(false)); // Desabilitado pra demonstração
 
         form.add(new TextField<String>("timeB", new PropertyModel<>(jogo, "timeB"))
                 .setRequired(true)
                 .add(StringValidator.lengthBetween(2, 100))
-                .setEnabled(false)); // Desabilitado para demonstração
+                .setEnabled(false)); // Desabilitado pra demonstração
 
         form.add(new Label("placar", jogo.getPlacarA() + " x " + jogo.getPlacarB()));
         form.add(new Label("status", "Em Andamento"));

@@ -4,12 +4,17 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.RuntimeConfigurationType;
 
 /**
- * Classe principal da aplicacao Wicket
+ * Classe principal que configura toda a aplicação web Wicket.
+ * 
+ * Aqui defino as rotas (URLs) e configurações gerais
+ * da interface web.
  */
 public class WicketApplication extends WebApplication {
 
     /**
-     * Construtor
+     * Construtor padrão.
+     * 
+     * Chama o construtor da classe pai (WebApplication).
      */
     public WicketApplication() {
         super();
@@ -22,9 +27,9 @@ public class WicketApplication extends WebApplication {
     protected void init() {
         super.init();
 
-        // Configuracao de injecao de dependencia (removida para simplificacao)
+        // Configuração de injeção de dependência (removida para simplificação)
 
-        // Configurar paginas
+        // Configurar as rotas (URLs) das páginas
         mountPage("/", HomePage.class);
         mountPage("/novo-jogo", NovoJogoPage.class);
         mountPage("/jogos/em-andamento", JogosEmAndamentoPage.class);
@@ -34,18 +39,21 @@ public class WicketApplication extends WebApplication {
         mountPage("/jogos/{id}/placar", AtualizarPlacarPage.class);
         mountPage("/jogos/{id}/encerrar", EncerrarJogoPage.class);
 
-        // Configuracoes adicionais
+        // Configurações adicionais do Wicket
         getMarkupSettings().setStripWicketTags(true);
         getMarkupSettings().setStripComments(true);
 
-        // Configurar debug
+        // Configurar debug (só em desenvolvimento)
         if (getConfigurationType() == RuntimeConfigurationType.DEVELOPMENT) {
             getDebugSettings().setDevelopmentUtilitiesEnabled(true);
         }
     }
 
     /**
-     * Pagina inicial
+     * Define qual é a página inicial da aplicação.
+     * 
+     * Quando alguém acessa a raiz do site (/), essa
+     * página é mostrada.
      */
     @Override
     public Class<HomePage> getHomePage() {

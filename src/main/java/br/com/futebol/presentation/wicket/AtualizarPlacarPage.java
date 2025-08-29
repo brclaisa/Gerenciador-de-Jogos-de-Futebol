@@ -13,7 +13,10 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.validation.validator.RangeValidator;
 
 /**
- * Página para atualizar placar de um jogo
+ * Página onde o usuário pode atualizar o placar de um jogo.
+ * 
+ * Por enquanto é só uma demonstração com dados mockados.
+ * Na implementação real, permitiria atualizar os gols dos times.
  */
 public class AtualizarPlacarPage extends WebPage {
 
@@ -27,7 +30,7 @@ public class AtualizarPlacarPage extends WebPage {
 
         Long jogoId = parameters.get("id").toLong();
 
-        // Para demonstração, criar dados mockados
+        // Por enquanto, criar dados mockados pra demonstração
         jogo = new JogoDTO();
         jogo.setId(jogoId);
         jogo.setTimeA("Time A");
@@ -39,7 +42,7 @@ public class AtualizarPlacarPage extends WebPage {
         add(new Label("titulo", "Atualizar Placar"));
         add(new Label("jogoInfo", jogo.getTimeA() + " vs " + jogo.getTimeB()));
 
-        // Formulário
+        // Formulário de atualização de placar
         Form<AtualizacaoPlacarDTO> form = new Form<AtualizacaoPlacarDTO>("formAtualizarPlacar") {
             @Override
             protected void onSubmit() {
@@ -47,7 +50,7 @@ public class AtualizarPlacarPage extends WebPage {
                     // Em uma implementação real, aqui seria chamado o serviço
                     // jogoService.atualizarPlacar(jogoId, placarDTO);
 
-                    // Redirecionar para a página principal com mensagem de sucesso
+                    // Deu certo! Redirecionar pra página inicial com mensagem de sucesso
                     setResponsePage(HomePage.class, new PageParameters().add("mensagem", "Placar atualizado com sucesso!"));
 
                 } catch (Exception e) {
@@ -56,7 +59,7 @@ public class AtualizarPlacarPage extends WebPage {
             }
         };
 
-        // Campos do formulário
+        // Campos para os placares dos times
         form.add(new NumberTextField<Integer>("placarA", new PropertyModel<>(placarDTO, "placarA"))
                 .setRequired(true)
                 .add(RangeValidator.minimum(0)));

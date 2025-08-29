@@ -17,12 +17,13 @@ import java.time.Duration;
 import java.util.Optional;
 
 /**
- * Serviço para integração com Redis.
+ * Serviço que cuida do cache Redis.
  * 
- * <p>Gerencia o cache de dados de jogos e placares utilizando Redis
- * como sistema de armazenamento em memória.</p>
+ * Uso o Redis pra guardar dados de jogos e placares em memória,
+ * assim as consultas ficam muito mais rápidas que ir no banco
+ * toda vez.
  * 
- * @author Sistema de Futebol
+ * @author Eu mesmo (desenvolvedor)
  * @version 1.0.0
  * @since 2024-01-01
  */
@@ -58,7 +59,8 @@ public class RedisService {
     /**
      * Construtor padrão.
      * 
-     * <p>Inicializa o ObjectMapper com suporte a tipos de data Java 8+.</p>
+     * Inicializa o ObjectMapper com suporte a tipos de data Java 8+.
+     * Preciso disso pra converter LocalDateTime pra JSON e vice-versa.
      */
     public RedisService() {
         this.objectMapper = new ObjectMapper();
@@ -68,8 +70,9 @@ public class RedisService {
     /**
      * Inicializa o serviço Redis.
      * 
-     * <p>Configura o pool de conexões e testa a conectividade
-     * com o servidor Redis.</p>
+     * Configura o pool de conexões e testa se consegue
+     * conectar no servidor Redis. É chamado automaticamente
+     * quando a aplicação sobe.
      */
     @PostConstruct
     public void inicializar() {

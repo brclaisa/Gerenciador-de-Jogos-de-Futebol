@@ -8,12 +8,13 @@ import jakarta.validation.constraints.Min;
 import java.time.LocalDateTime;
 
 /**
- * DTO para transferência de dados de uma partida de futebol.
+ * DTO principal que representa um jogo de futebol.
  *
- * <p>Esta classe encapsula todas as informações necessárias para
- * transferir dados de jogos entre as camadas da aplicação.</p>
+ * Uso essa classe para passar dados de jogos entre as diferentes
+ * partes da aplicação. É tipo um envelope que carrega todas as
+ * informações importantes de uma partida.
  *
- * @author Sistema de Futebol
+ * @author Eu mesmo (desenvolvedor)
  * @version 1.0.0
  * @since 2024-01-01
  */
@@ -56,6 +57,9 @@ public class JogoDTO {
 
     /**
      * Construtor padrão.
+     * 
+     * Preciso disso pro Spring/Jakarta funcionar. Sem isso
+     * dá erro na hora de deserializar JSON ou usar reflexão.
      */
     public JogoDTO() {
         // Construtor padrão necessário para frameworks
@@ -63,6 +67,9 @@ public class JogoDTO {
 
     /**
      * Construtor com parâmetros obrigatórios.
+     *
+     * Uso esse quando já sei os dados básicos do jogo e
+     * quero criar o DTO direto, sem ficar usando setters.
      *
      * @param timeA Nome do primeiro time
      * @param timeB Nome do segundo time
@@ -75,7 +82,7 @@ public class JogoDTO {
         this.dataHoraPartida = dataHoraPartida;
     }
 
-    // Getters e Setters
+    // Getters e Setters - padrão Java Bean
 
     /**
      * Obtém o identificador do jogo.
@@ -241,6 +248,10 @@ public class JogoDTO {
 
     /**
      * Obtém o resultado formatado da partida.
+     *
+     * Método útil pra mostrar quem ganhou ou se deu empate.
+     * Uso bastante na interface pra exibir o resultado de forma
+     * amigável pro usuário.
      *
      * @return String com o resultado da partida
      */
