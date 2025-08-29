@@ -1,3 +1,4 @@
+br/com/futebol/presentation/wicket/NovoJogoPage$LocalDateTimeConverter.class
 br/com/futebol/infrastructure/messaging/RabbitMQService.class
 br/com/futebol/presentation/wicket/WicketApplication.class
 br/com/futebol/presentation/wicket/JogosEncerradosPage$2.class
@@ -21,6 +22,7 @@ br/com/futebol/presentation/wicket/HomePage$3.class
 br/com/futebol/application/service/JogoService.class
 br/com/futebol/presentation/wicket/AtualizarPlacarPage.class
 br/com/futebol/presentation/wicket/EncerrarJogoPage$1.class
+br/com/futebol/presentation/wicket/NovoJogoPage$2.class
 br/com/futebol/presentation/wicket/TodosJogosPage$2.class
 br/com/futebol/infrastructure/cache/RedisService.class
 br/com/futebol/presentation/wicket/JogosEmAndamentoPage$2.class

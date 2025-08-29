@@ -10,8 +10,14 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.validation.validator.StringValidator;
+import org.apache.wicket.util.convert.IConverter;
+import org.apache.wicket.util.convert.converter.AbstractConverter;
+import org.apache.wicket.util.convert.ConversionException;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Locale;
 
 /**
  * Página para criar um novo jogo
@@ -61,9 +67,19 @@ public class NovoJogoPage extends WebPage {
                 .setRequired(true)
                 .add(StringValidator.lengthBetween(2, 100)));
 
-        // Campo para data e hora da partida
-        form.add(new TextField<LocalDateTime>("dataHoraPartida", new PropertyModel<>(jogoDTO, "dataHoraPartida"))
-                .setRequired(true));
+        // Campo para data e hora da partida com conversor personalizado
+        TextField<LocalDateTime> dataHoraField = new TextField<LocalDateTime>("dataHoraPartida", 
+                new PropertyModel<>(jogoDTO, "dataHoraPartida")) {
+            @Override
+            public <C> IConverter<C> getConverter(Class<C> type) {
+                if (LocalDateTime.class.isAssignableFrom(type)) {
+                    return (IConverter<C>) new LocalDateTimeConverter();
+                }
+                return super.getConverter(type);
+            }
+        };
+        dataHoraField.setRequired(true);
+        form.add(dataHoraField);
 
         // Botões
         form.add(new BookmarkablePageLink<Void>("linkCancelar", HomePage.class));
@@ -75,5 +91,37 @@ public class NovoJogoPage extends WebPage {
 
         // Link de volta
         add(new BookmarkablePageLink<Void>("linkVoltar", HomePage.class));
+    }
+
+    /**
+     * Conversor personalizado para LocalDateTime
+     */
+    private static class LocalDateTimeConverter extends AbstractConverter<LocalDateTime> {
+        private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+        @Override
+        public LocalDateTime convertToObject(String value, Locale locale) {
+            if (value == null || value.trim().isEmpty()) {
+                return null;
+            }
+            try {
+                return LocalDateTime.parse(value.trim(), FORMATTER);
+            } catch (DateTimeParseException e) {
+                throw new ConversionException("Formato de data inválido. Use: dd/MM/yyyy HH:mm", e);
+            }
+        }
+
+        @Override
+        public String convertToString(LocalDateTime value, Locale locale) {
+            if (value == null) {
+                return "";
+            }
+            return value.format(FORMATTER);
+        }
+
+        @Override
+        protected Class<LocalDateTime> getTargetType() {
+            return LocalDateTime.class;
+        }
     }
 }
