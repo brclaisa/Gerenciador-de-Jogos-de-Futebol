@@ -67,8 +67,9 @@ services:
     image: quay.io/wildfly/wildfly:latest
     container_name: futebol_wildfly
     environment:
-      JAVA_OPTS: "-Xms512m -Xmx1024m -Djava.net.preferIPv4Stack=true"
+      JAVA_OPTS: "-Xms512m -Xmx1024m -Djava.net.preferIPv4Stack=true -Duser.timezone=America/Sao_Paulo"
       JBOSS_MODULES_SYSTEM_PKGS: "org.jboss.logmanager"
+      TZ: "America/Sao_Paulo"
     ports:
       - "8080:8080"   # HTTP
       - "9990:9990"   # Admin Console

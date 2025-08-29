@@ -130,7 +130,23 @@
             <h2>Todos os Jogos</h2>
             
             <div wicket:id="todosJogos">
-                <!-- Lista de jogos será populada dinamicamente -->
+                <!-- Template para cada jogo -->
+                <div class="jogo-item">
+                    <div class="jogo-info">
+                        <div class="jogo-times">
+                            <span wicket:id="timeA">Time A</span> vs <span wicket:id="timeB">Time B</span>
+                        </div>
+                        <div class="jogo-placar">
+                            Placar: <span wicket:id="placar">0 x 0</span>
+                        </div>
+                        <div class="jogo-status">
+                            Status: <span wicket:id="status">EM_ANDAMENTO</span>
+                        </div>
+                        <div class="jogo-data">
+                            Data: <span wicket:id="dataPartida">01/01/2025 20:00</span>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <div class="empty-state">

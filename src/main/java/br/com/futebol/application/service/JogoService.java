@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -86,8 +87,14 @@ public class JogoService {
                 throw new IllegalArgumentException("Times A e B não podem ser iguais");
             }
             
-            if (jogoDTO.getDataHoraPartida().isBefore(LocalDateTime.now())) {
-                throw new IllegalArgumentException("Data da partida não pode ser no passado");
+            // Permitir margem de tolerância de 5 minutos para evitar problemas de sincronização
+            // Usar timezone de Brasília explicitamente
+            ZoneId brasiliaZone = ZoneId.of("America/Sao_Paulo");
+            LocalDateTime agora = LocalDateTime.now(brasiliaZone);
+            LocalDateTime margemTolerancia = agora.minusMinutes(5);
+            
+            if (jogoDTO.getDataHoraPartida().isBefore(margemTolerancia)) {
+                throw new IllegalArgumentException("Data da partida deve ser pelo menos 5 minutos no futuro");
             }
 
             Jogo jogo = new Jogo(jogoDTO.getTimeA(), jogoDTO.getTimeB(), 
