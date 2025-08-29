@@ -5,14 +5,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Filtro para configurar Content Security Policy (CSP)
- * Permite estilos inline necessários para o Wicket
+ * Filtro que configura a política de segurança de conteúdo (CSP).
+ * 
+ * Permite estilos inline que o Wicket precisa pra funcionar,
+ * mas mantém a segurança contra ataques XSS.
  */
 public class CSPFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        // Inicialização do filtro
+        // Inicialização do filtro (não precisa de nada especial)
     }
 
     @Override
@@ -21,7 +23,7 @@ public class CSPFilter implements Filter {
         
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         
-        // Configuração de CSP que permite estilos inline
+        // Configuração de CSP que permite estilos inline (necessário pro Wicket)
         String cspPolicy = "default-src 'self'; " +
                           "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
                           "style-src 'self' 'unsafe-inline'; " +
@@ -33,12 +35,12 @@ public class CSPFilter implements Filter {
         
         httpResponse.setHeader("Content-Security-Policy", cspPolicy);
         
-        // Continuar com a cadeia de filtros
+        // Continuar com a cadeia de filtros (deixar a requisição passar)
         chain.doFilter(request, response);
     }
 
     @Override
     public void destroy() {
-        // Limpeza do filtro
+        // Limpeza do filtro (não precisa de nada especial)
     }
 }

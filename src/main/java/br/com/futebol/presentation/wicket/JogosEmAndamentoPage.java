@@ -16,7 +16,10 @@ import java.util.ArrayList;
 import java.sql.*;
 
 /**
- * Página para listar jogos em andamento
+ * Página que mostra apenas os jogos que estão acontecendo agora.
+ * 
+ * Aqui o usuário vê só os jogos em andamento, tipo um "painel
+ * ao vivo" das partidas que estão rolando.
  */
 public class JogosEmAndamentoPage extends WebPage {
 
@@ -28,10 +31,10 @@ public class JogosEmAndamentoPage extends WebPage {
         // Título da página
         add(new Label("titulo", "Jogos em Andamento"));
 
-        // Obter instância do JogoService via CDI
+        // Tentar obter o serviço via CDI (injeção de dependência)
         final Object jogoService = obterJogoService();
 
-        // Lista de jogos em andamento (dados reais do banco)
+        // Lista de jogos em andamento - busca dados reais do banco
         add(new ListView<JogoDTO>("jogosEmAndamento", new LoadableDetachableModel<List<JogoDTO>>() {
             @Override
             protected List<JogoDTO> load() {

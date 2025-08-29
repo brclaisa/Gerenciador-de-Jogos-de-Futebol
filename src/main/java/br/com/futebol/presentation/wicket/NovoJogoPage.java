@@ -22,7 +22,10 @@ import java.time.format.DateTimeParseException;
 import java.util.Locale;
 
 /**
- * Página para criar um novo jogo
+ * Página onde o usuário pode criar um novo jogo de futebol.
+ * 
+ * Aqui tem um formulário com campos para os times e data/hora
+ * da partida. É tipo um "cadastro" de jogos.
  */
 public class NovoJogoPage extends WebPage {
 
@@ -30,13 +33,13 @@ public class NovoJogoPage extends WebPage {
 
     private JogoDTO jogoDTO;
     
-    // Serviço de jogos obtido via CDI
+    // Serviço de jogos obtido via CDI (injeção de dependência)
     private final JogoService jogoService;
 
     public NovoJogoPage(final PageParameters parameters) {
         super(parameters);
         
-        // Obter instância do JogoService via CDI
+        // Tentar obter o JogoService via CDI (injeção de dependência)
         this.jogoService = CDIProvider.getInstance(JogoService.class);
         if (this.jogoService == null) {
             throw new RuntimeException("Não foi possível obter instância do JogoService");
@@ -47,20 +50,20 @@ public class NovoJogoPage extends WebPage {
         // Título da página
         add(new Label("titulo", "Criar Novo Jogo"));
 
-        // Formulário
+        // Formulário principal da página
         Form<JogoDTO> form = new Form<JogoDTO>("formNovoJogo") {
             @Override
             protected void onSubmit() {
                 try {
-                    // Definir data/hora padrão se não fornecida
+                    // Se não informou data/hora, usar 1 hora no futuro como padrão
                     if (jogoDTO.getDataHoraPartida() == null) {
                         jogoDTO.setDataHoraPartida(LocalDateTime.now().plusHours(1));
                     }
 
-                    // Chamar o serviço para criar o jogo
+                    // Chamar o serviço pra criar o jogo no sistema
                     JogoDTO jogoCriado = jogoService.criarJogo(jogoDTO);
 
-                    // Redirecionar para a página principal com mensagem de sucesso
+                    // Deu certo! Redirecionar pra página inicial com mensagem de sucesso
                     setResponsePage(HomePage.class, new PageParameters().add("mensagem", "Jogo criado com sucesso! ID: " + jogoCriado.getId()));
 
                 } catch (Exception e) {
@@ -78,7 +81,7 @@ public class NovoJogoPage extends WebPage {
                 .setRequired(true)
                 .add(StringValidator.lengthBetween(2, 100)));
 
-        // Campo para data e hora da partida com conversor personalizado
+        // Campo para data e hora da partida (com conversor personalizado)
         TextField<LocalDateTime> dataHoraField = new TextField<LocalDateTime>("dataHoraPartida", 
                 new PropertyModel<>(jogoDTO, "dataHoraPartida")) {
             @Override
@@ -107,7 +110,10 @@ public class NovoJogoPage extends WebPage {
     }
 
     /**
-     * Conversor personalizado para LocalDateTime
+     * Conversor personalizado para LocalDateTime.
+     * 
+     * Classe que converte strings de data/hora pra LocalDateTime
+     * e vice-versa. Uso o formato brasileiro (dd/MM/yyyy HH:mm).
      */
     private static class LocalDateTimeConverter extends AbstractConverter<LocalDateTime> {
         private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");

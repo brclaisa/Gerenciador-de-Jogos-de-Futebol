@@ -12,8 +12,10 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Repositório para operações de persistência da entidade Jogo
- * Implementação JPA para persistência no banco de dados
+ * Classe que cuida de tudo relacionado ao banco de dados dos jogos.
+ * 
+ * Aqui ficam as operações de salvar, buscar, listar e atualizar
+ * jogos no PostgreSQL usando JPA/Hibernate.
  */
 @ApplicationScoped
 @Transactional
@@ -23,7 +25,10 @@ public class JogoRepository {
     private EntityManager entityManager;
 
     /**
-     * Salva um novo jogo
+     * Salva um novo jogo ou atualiza um existente.
+     * 
+     * Se o jogo não tem ID, cria um novo. Se já tem ID,
+     * atualiza o existente. É tipo um "save or update".
      */
     public Jogo salvar(Jogo jogo) {
         try {

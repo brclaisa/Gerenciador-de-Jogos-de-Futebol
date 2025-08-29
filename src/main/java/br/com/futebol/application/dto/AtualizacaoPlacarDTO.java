@@ -4,12 +4,12 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 /**
- * DTO para atualização de placar de uma partida.
+ * DTO usado quando precisamos atualizar o placar de um jogo.
  * 
- * <p>Esta classe encapsula os dados necessários para atualizar
- * o placar de um jogo em andamento.</p>
+ * Basicamente, quando o juiz marca um gol ou alguém quer corrigir
+ * o placar, usamos essa classe para passar os novos valores.
  * 
- * @author Sistema de Futebol
+ * @author Laisa Brc
  * @version 1.0.0
  * @since 2024-01-01
  */
@@ -27,6 +27,9 @@ public final class AtualizacaoPlacarDTO {
 
     /**
      * Construtor padrão.
+     * 
+     * Preciso disso pro Spring/Jakarta funcionar direito.
+     * Sem isso dá erro de serialização.
      */
     public AtualizacaoPlacarDTO() {
         // Construtor padrão necessário para frameworks
@@ -34,6 +37,9 @@ public final class AtualizacaoPlacarDTO {
 
     /**
      * Construtor com parâmetros obrigatórios.
+     * 
+     * Uso esse quando já sei os placares e quero criar
+     * o DTO direto, sem usar setters.
      * 
      * @param placarA Placar do time A
      * @param placarB Placar do time B
@@ -43,7 +49,7 @@ public final class AtualizacaoPlacarDTO {
         this.placarB = placarB;
     }
 
-    // Getters e Setters
+    // Getters e Setters - padrão Java Bean
 
     /**
      * Obtém o placar do primeiro time.

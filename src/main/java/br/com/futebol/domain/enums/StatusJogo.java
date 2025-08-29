@@ -1,12 +1,12 @@
 package br.com.futebol.domain.enums;
 
 /**
- * Enum que representa o status de uma partida de futebol.
+ * Enum que define os possíveis status de uma partida de futebol.
  *
- * <p>Define os possíveis estados que um jogo pode ter durante
- * seu ciclo de vida na aplicação.</p>
+ * Basicamente, um jogo pode estar acontecendo agora ou já ter
+ * acabado. Esses são os dois estados possíveis no sistema.
  *
- * @author Sistema de Futebol
+ * @author Eu mesmo (desenvolvedor)
  * @version 1.0.0
  * @since 2024-01-01
  */
@@ -15,16 +15,16 @@ public enum StatusJogo {
     /**
      * Jogo em andamento.
      *
-     * <p>Indica que a partida está sendo disputada e pode
-     * receber atualizações de placar.</p>
+     * A partida está rolando agora e pode receber
+     * atualizações de placar (quando alguém marca gol).
      */
     EM_ANDAMENTO("Em Andamento"),
 
     /**
      * Jogo encerrado.
      *
-     * <p>Indica que a partida foi finalizada e não pode
-     * mais receber alterações de placar.</p>
+     * A partida acabou e não pode mais receber
+     * alterações de placar. É tipo "já foi".
      */
     ENCERRADO("Encerrado");
 
@@ -32,6 +32,9 @@ public enum StatusJogo {
 
     /**
      * Construtor do enum.
+     *
+     * Cada status tem uma descrição em português
+     * que fica mais bonita na interface.
      *
      * @param descricao Descrição legível do status
      */

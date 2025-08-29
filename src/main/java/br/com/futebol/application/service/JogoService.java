@@ -21,13 +21,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * Serviço de aplicação para gerenciamento de jogos de futebol.
+ * Serviço principal que cuida de tudo relacionado aos jogos de futebol.
  * 
- * <p>Esta classe implementa toda a lógica de negócio relacionada aos jogos,
- * incluindo criação, atualização, consulta e remoção. Coordena as operações
- * entre as camadas de domínio, infraestrutura e apresentação.</p>
+ * Aqui é onde fica toda a lógica de negócio: criar jogos, atualizar
+ * placares, listar, etc. É tipo o "cérebro" da aplicação que coordena
+ * tudo entre o banco, cache e mensageria.
  * 
- * @author Sistema de Futebol
+ * @author Eu mesmo (desenvolvedor)
  * @version 1.0.0
  * @since 2024-01-01
  */
@@ -51,6 +51,9 @@ public class JogoService {
 
     /**
      * Construtor padrão para CDI
+     * 
+     * O CDI (Contexts and Dependency Injection) vai injetar
+     * as dependências automaticamente quando criar a instância.
      */
     public JogoService() {
         // CDI irá injetar as dependências
@@ -58,6 +61,9 @@ public class JogoService {
 
     /**
      * Construtor público para instanciação manual (usado quando CDI não funciona)
+     * 
+     * Uso esse quando o CDI dá problema e preciso criar a instância
+     * na mão, passando as dependências explicitamente.
      */
     public JogoService(JogoRepository jogoRepository, RabbitMQService rabbitMQService, RedisService redisService) {
         this.jogoRepository = jogoRepository;
@@ -69,8 +75,9 @@ public class JogoService {
     /**
      * Cria um novo jogo.
      * 
-     * <p>Valida os dados do jogo, persiste no banco de dados,
-     * publica evento de criação e armazena no cache.</p>
+     * Método principal que faz toda a mágica: valida os dados,
+     * salva no banco, publica evento e guarda no cache.
+     * É aqui que um jogo "nasce" no sistema.
      * 
      * @param jogoDTO DTO com os dados do jogo a ser criado
      * @return DTO do jogo criado com ID gerado
@@ -87,8 +94,9 @@ public class JogoService {
                 throw new IllegalArgumentException("Times A e B não podem ser iguais");
             }
             
-            // Permitir margem de tolerância de 5 minutos para evitar problemas de sincronização
-            // Usar timezone de Brasília explicitamente
+            // Validação de data com margem de tolerância
+            // Uso 5 minutos pra evitar problemas de sincronização de relógio
+            // e forço o timezone de Brasília pra não dar confusão
             ZoneId brasiliaZone = ZoneId.of("America/Sao_Paulo");
             LocalDateTime agora = LocalDateTime.now(brasiliaZone);
             LocalDateTime margemTolerancia = agora.minusMinutes(5);
@@ -103,14 +111,14 @@ public class JogoService {
 
             JogoDTO jogoCriado = converterParaDTO(jogo);
 
-            // Publicar evento
+            // Publicar evento de criação
             try {
                 rabbitMQService.publicarJogoCriado(jogoCriado);
             } catch (Exception e) {
                 LOGGER.warn("Erro ao publicar evento RabbitMQ, continuando...", e);
             }
 
-            // Armazenar no cache
+            // Guardar no cache pra consultas rápidas
             try {
                 redisService.armazenarJogo(jogoCriado);
             } catch (Exception e) {
@@ -132,8 +140,9 @@ public class JogoService {
     /**
      * Atualiza o placar de um jogo.
      * 
-     * <p>Verifica se o jogo existe e não está encerrado,
-     * atualiza o placar e publica evento de atualização.</p>
+     * Método usado quando alguém marca um gol ou quer corrigir
+     * o placar. Verifica se o jogo existe e não acabou, depois
+     * atualiza tudo e avisa o sistema.
      * 
      * @param jogoId ID do jogo
      * @param placarDTO DTO com os novos placares

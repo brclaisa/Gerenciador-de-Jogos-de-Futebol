@@ -12,7 +12,10 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import java.util.List;
 
 /**
- * Página para listar jogos encerrados
+ * Página que mostra os jogos que já acabaram.
+ * 
+ * Por enquanto é só uma demonstração com dados mockados.
+ * Na implementação real, listaria todos os jogos com status "encerrado".
  */
 public class JogosEncerradosPage extends WebPage {
 
@@ -24,11 +27,11 @@ public class JogosEncerradosPage extends WebPage {
         // Título da página
         add(new Label("titulo", "Jogos Encerrados"));
 
-        // Lista de jogos encerrados (dados mockados para demonstração)
+        // Lista de jogos encerrados (por enquanto vazia pra demonstração)
         add(new ListView<JogoDTO>("jogosEncerrados", new LoadableDetachableModel<List<JogoDTO>>() {
             @Override
             protected List<JogoDTO> load() {
-                // Retornar lista vazia para demonstração
+                // Por enquanto retorna lista vazia
                 return List.of();
             }
         }) {

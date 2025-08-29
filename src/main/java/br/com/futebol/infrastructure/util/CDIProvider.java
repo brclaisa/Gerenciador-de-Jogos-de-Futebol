@@ -5,14 +5,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Utilitário para obter instâncias via CDI quando a injeção direta não funciona
+ * Classe utilitária que ajuda a obter instâncias via CDI.
+ * 
+ * Uso isso quando a injeção de dependência automática não
+ * funciona e preciso "pegar" as classes na mão.
  */
 public class CDIProvider {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(CDIProvider.class);
     
     /**
-     * Obtém uma instância de uma classe via CDI
+     * Obtém uma instância de uma classe via CDI.
+     * 
+     * Método principal que tenta "pegar" uma instância
+     * da classe que você quiser. Se der certo, retorna a
+     * instância. Se der errado, retorna null.
      * 
      * @param <T> tipo da classe
      * @param clazz classe a ser instanciada
@@ -33,7 +40,11 @@ public class CDIProvider {
     }
     
     /**
-     * Verifica se o CDI está disponível
+     * Verifica se o CDI está funcionando.
+     * 
+     * Método útil pra testar se o sistema de injeção
+     * de dependências está rodando antes de tentar
+     * usar.
      * 
      * @return true se CDI estiver disponível
      */
