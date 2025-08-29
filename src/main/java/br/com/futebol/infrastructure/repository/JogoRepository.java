@@ -23,88 +23,84 @@ public class JogoRepository {
     private EntityManager entityManager;
 
     /**
-     * Construtor para inicializar EntityManager quando CDI falhar
-     */
-    public JogoRepository() {
-        inicializarEntityManager();
-    }
-
-    /**
-     * Inicializa o EntityManager manualmente se necessário
-     */
-    private void inicializarEntityManager() {
-        if (entityManager == null) {
-            try {
-                // Criar EntityManager manualmente usando Hibernate
-                jakarta.persistence.EntityManagerFactory emf = 
-                    jakarta.persistence.Persistence.createEntityManagerFactory("futebolPU");
-                this.entityManager = emf.createEntityManager();
-                System.out.println("EntityManager inicializado manualmente - CDI não funcionou");
-            } catch (Exception e) {
-                System.err.println("Erro ao inicializar EntityManager: " + e.getMessage());
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
      * Salva um novo jogo
      */
     public Jogo salvar(Jogo jogo) {
-        inicializarEntityManager();
-        if (jogo.getId() == null) {
-            entityManager.persist(jogo);
-        } else {
-            jogo = entityManager.merge(jogo);
+        try {
+            if (jogo.getId() == null) {
+                entityManager.persist(jogo);
+            } else {
+                jogo = entityManager.merge(jogo);
+            }
+            return jogo;
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao salvar jogo: " + e.getMessage(), e);
         }
-        return jogo;
     }
 
     /**
      * Atualiza um jogo existente
      */
     public Jogo atualizar(Jogo jogo) {
-        inicializarEntityManager();
-        return entityManager.merge(jogo);
+        try {
+            return entityManager.merge(jogo);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao atualizar jogo: " + e.getMessage(), e);
+        }
     }
 
     /**
      * Busca um jogo por ID
      */
     public Optional<Jogo> buscarPorId(Long id) {
-        Jogo jogo = entityManager.find(Jogo.class, id);
-        return Optional.ofNullable(jogo);
+        try {
+            Jogo jogo = entityManager.find(Jogo.class, id);
+            return Optional.ofNullable(jogo);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao buscar jogo por ID: " + e.getMessage(), e);
+        }
     }
 
     /**
      * Lista todos os jogos
      */
     public List<Jogo> listarTodos() {
-        inicializarEntityManager();
-        TypedQuery<Jogo> query = entityManager.createQuery(
-            "SELECT j FROM Jogo j ORDER BY j.dataHoraPartida DESC", Jogo.class);
-        return query.getResultList();
+        try {
+            TypedQuery<Jogo> query = entityManager.createQuery(
+                "SELECT j FROM Jogo j ORDER BY j.dataHoraPartida DESC", Jogo.class);
+            return query.getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao listar todos os jogos: " + e.getMessage(), e);
+        }
     }
 
     /**
      * Lista jogos por status
      */
     public List<Jogo> listarPorStatus(StatusJogo status) {
-        TypedQuery<Jogo> query = entityManager.createQuery(
-            "SELECT j FROM Jogo j WHERE j.status = :status ORDER BY j.dataHoraPartida DESC", Jogo.class);
-        query.setParameter("status", status);
-        return query.getResultList();
+        try {
+            TypedQuery<Jogo> query = entityManager.createQuery(
+                "SELECT j FROM Jogo j WHERE j.status = :status ORDER BY j.dataHoraPartida DESC", Jogo.class);
+            query.setParameter("status", status);
+            return query.getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao listar jogos por status: " + e.getMessage(), e);
+        }
     }
 
     /**
      * Lista jogos por período
      */
     public List<Jogo> listarPorPeriodo(LocalDateTime inicio, LocalDateTime fim) {
-        TypedQuery<Jogo> query = entityManager.createQuery(
-            "SELECT j FROM Jogo j WHERE j.dataHoraPartida BETWEEN :inicio AND :fim ORDER BY j.dataHoraPartida DESC", Jogo.class);
-        query.setParameter("inicio", inicio);
-        query.setParameter("fim", fim);
-        return query.getResultList();
+        try {
+            TypedQuery<Jogo> query = entityManager.createQuery(
+                "SELECT j FROM Jogo j WHERE j.dataHoraPartida BETWEEN :inicio AND :fim ORDER BY j.dataHoraPartida DESC", Jogo.class);
+            query.setParameter("inicio", inicio);
+            query.setParameter("fim", fim);
+            return query.getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao listar jogos por período: " + e.getMessage(), e);
+        }
     }
 
     /**
@@ -125,9 +121,13 @@ public class JogoRepository {
      * Remove um jogo
      */
     public void remover(Long id) {
-        Jogo jogo = entityManager.find(Jogo.class, id);
-        if (jogo != null) {
-            entityManager.remove(jogo);
+        try {
+            Jogo jogo = entityManager.find(Jogo.class, id);
+            if (jogo != null) {
+                entityManager.remove(jogo);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao remover jogo: " + e.getMessage(), e);
         }
     }
 
@@ -135,28 +135,40 @@ public class JogoRepository {
      * Verifica se um jogo existe por ID
      */
     public boolean existePorId(Long id) {
-        TypedQuery<Long> query = entityManager.createQuery(
-            "SELECT COUNT(j) FROM Jogo j WHERE j.id = :id", Long.class);
-        query.setParameter("id", id);
-        return query.getSingleResult() > 0;
+        try {
+            TypedQuery<Long> query = entityManager.createQuery(
+                "SELECT COUNT(j) FROM Jogo j WHERE j.id = :id", Long.class);
+            query.setParameter("id", id);
+            return query.getSingleResult() > 0;
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao verificar existência do jogo: " + e.getMessage(), e);
+        }
     }
 
     /**
      * Conta o total de jogos
      */
     public long contarTotal() {
-        TypedQuery<Long> query = entityManager.createQuery(
-            "SELECT COUNT(j) FROM Jogo j", Long.class);
-        return query.getSingleResult();
+        try {
+            TypedQuery<Long> query = entityManager.createQuery(
+                "SELECT COUNT(j) FROM Jogo j", Long.class);
+            return query.getSingleResult();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao contar total de jogos: " + e.getMessage(), e);
+        }
     }
 
     /**
      * Conta jogos por status
      */
     public long contarPorStatus(StatusJogo status) {
-        TypedQuery<Long> query = entityManager.createQuery(
-            "SELECT COUNT(j) FROM Jogo j WHERE j.status = :status", Long.class);
-        query.setParameter("status", status);
-        return query.getSingleResult();
+        try {
+            TypedQuery<Long> query = entityManager.createQuery(
+                "SELECT COUNT(j) FROM Jogo j WHERE j.status = :status", Long.class);
+            query.setParameter("status", status);
+            return query.getSingleResult();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao contar jogos por status: " + e.getMessage(), e);
+        }
     }
 }

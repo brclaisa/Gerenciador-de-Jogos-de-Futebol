@@ -18,9 +18,15 @@
         <properties>
             <!-- Configurações de conexão -->
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
-            <property name="hibernate.hbm2ddl.auto" value="create"/>
+            <property name="hibernate.hbm2ddl.auto" value="validate"/>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
+            
+            <!-- Configurações de performance -->
+            <property name="hibernate.jdbc.batch_size" value="20"/>
+            <property name="hibernate.order_inserts" value="true"/>
+            <property name="hibernate.order_updates" value="true"/>
+            <property name="hibernate.jdbc.fetch_size" value="50"/>
         </properties>
     </persistence-unit>
 

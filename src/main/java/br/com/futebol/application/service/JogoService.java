@@ -49,25 +49,6 @@ public class JogoService {
     private RedisService redisService;
 
     /**
-     * Construtor para inicializar dependências quando CDI falhar
-     */
-    public JogoService() {
-        // Inicializar dependências manualmente se CDI não funcionar
-        if (jogoRepository == null) {
-            this.jogoRepository = new JogoRepository();
-            LOGGER.warn("JogoRepository inicializado manualmente - CDI não funcionou");
-        }
-        if (rabbitMQService == null) {
-            this.rabbitMQService = new RabbitMQService();
-            LOGGER.warn("RabbitMQService inicializado manualmente - CDI não funcionou");
-        }
-        if (redisService == null) {
-            this.redisService = new RedisService();
-            LOGGER.warn("RedisService inicializado manualmente - CDI não funcionou");
-        }
-    }
-
-    /**
      * Cria um novo jogo.
      * 
      * <p>Valida os dados do jogo, persiste no banco de dados,
@@ -79,23 +60,49 @@ public class JogoService {
      */
     @Transactional
     public JogoDTO criarJogo(@Valid final JogoDTO jogoDTO) {
-        LOGGER.info("Criando novo jogo: {} vs {}", jogoDTO.getTimeA(), 
-                jogoDTO.getTimeB());
+        try {
+            LOGGER.info("Criando novo jogo: {} vs {}", jogoDTO.getTimeA(), 
+                    jogoDTO.getTimeB());
 
-        Jogo jogo = new Jogo(jogoDTO.getTimeA(), jogoDTO.getTimeB(), 
-                jogoDTO.getDataHoraPartida());
-        jogo = jogoRepository.salvar(jogo);
+            // Validações de negócio
+            if (jogoDTO.getTimeA().equals(jogoDTO.getTimeB())) {
+                throw new IllegalArgumentException("Times A e B não podem ser iguais");
+            }
+            
+            if (jogoDTO.getDataHoraPartida().isBefore(LocalDateTime.now())) {
+                throw new IllegalArgumentException("Data da partida não pode ser no passado");
+            }
 
-        JogoDTO jogoCriado = converterParaDTO(jogo);
+            Jogo jogo = new Jogo(jogoDTO.getTimeA(), jogoDTO.getTimeB(), 
+                    jogoDTO.getDataHoraPartida());
+            jogo = jogoRepository.salvar(jogo);
 
-        // Publicar evento
-        rabbitMQService.publicarJogoCriado(jogoCriado);
+            JogoDTO jogoCriado = converterParaDTO(jogo);
 
-        // Armazenar no cache
-        redisService.armazenarJogo(jogoCriado);
+            // Publicar evento
+            try {
+                rabbitMQService.publicarJogoCriado(jogoCriado);
+            } catch (Exception e) {
+                LOGGER.warn("Erro ao publicar evento RabbitMQ, continuando...", e);
+            }
 
-        LOGGER.info("Jogo criado com sucesso: ID {}", jogo.getId());
-        return jogoCriado;
+            // Armazenar no cache
+            try {
+                redisService.armazenarJogo(jogoCriado);
+            } catch (Exception e) {
+                LOGGER.warn("Erro ao armazenar no cache Redis, continuando...", e);
+            }
+
+            LOGGER.info("Jogo criado com sucesso: ID {}", jogo.getId());
+            return jogoCriado;
+            
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn("Dados inválidos para criação de jogo: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            LOGGER.error("Erro inesperado ao criar jogo", e);
+            throw new RuntimeException("Erro interno do sistema ao criar jogo", e);
+        }
     }
 
     /**
@@ -113,37 +120,54 @@ public class JogoService {
     @Transactional
     public JogoDTO atualizarPlacar(final Long jogoId, 
             @Valid final AtualizacaoPlacarDTO placarDTO) {
-        LOGGER.info("Atualizando placar do jogo {}: {} x {}", jogoId, 
-                placarDTO.getPlacarA(), placarDTO.getPlacarB());
+        try {
+            LOGGER.info("Atualizando placar do jogo {}: {} x {}", jogoId, 
+                    placarDTO.getPlacarA(), placarDTO.getPlacarB());
 
-        Optional<Jogo> jogoOpt = jogoRepository.buscarPorId(jogoId);
-        if (jogoOpt.isEmpty()) {
-            throw new IllegalArgumentException("Jogo não encontrado com ID: " + 
-                    jogoId);
+            Optional<Jogo> jogoOpt = jogoRepository.buscarPorId(jogoId);
+            if (jogoOpt.isEmpty()) {
+                throw new IllegalArgumentException("Jogo não encontrado com ID: " + 
+                        jogoId);
+            }
+
+            Jogo jogo = jogoOpt.get();
+            if (jogo.isEncerrado()) {
+                throw new IllegalStateException(
+                        "Não é possível atualizar placar de jogo encerrado");
+            }
+
+            jogo.atualizarPlacar(placarDTO.getPlacarA(), placarDTO.getPlacarB());
+            jogo = jogoRepository.atualizar(jogo);
+
+            JogoDTO jogoAtualizado = converterParaDTO(jogo);
+
+            // Publicar evento
+            try {
+                rabbitMQService.publicarPlacarAtualizado(jogoAtualizado);
+            } catch (Exception e) {
+                LOGGER.warn("Erro ao publicar evento RabbitMQ, continuando...", e);
+            }
+
+            // Atualizar cache
+            try {
+                redisService.armazenarPlacar(jogoId, placarDTO.getPlacarA(), 
+                        placarDTO.getPlacarB());
+                redisService.armazenarJogo(jogoAtualizado);
+            } catch (Exception e) {
+                LOGGER.warn("Erro ao atualizar cache Redis, continuando...", e);
+            }
+
+            LOGGER.info("Placar atualizado com sucesso: Jogo {} - {} x {}", 
+                    jogoId, placarDTO.getPlacarA(), placarDTO.getPlacarB());
+            return jogoAtualizado;
+            
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            LOGGER.warn("Erro de validação ao atualizar placar: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            LOGGER.error("Erro inesperado ao atualizar placar", e);
+            throw new RuntimeException("Erro interno do sistema ao atualizar placar", e);
         }
-
-        Jogo jogo = jogoOpt.get();
-        if (jogo.isEncerrado()) {
-            throw new IllegalStateException(
-                    "Não é possível atualizar placar de jogo encerrado");
-        }
-
-        jogo.atualizarPlacar(placarDTO.getPlacarA(), placarDTO.getPlacarB());
-        jogo = jogoRepository.atualizar(jogo);
-
-        JogoDTO jogoAtualizado = converterParaDTO(jogo);
-
-        // Publicar evento
-        rabbitMQService.publicarPlacarAtualizado(jogoAtualizado);
-
-        // Atualizar cache
-        redisService.armazenarPlacar(jogoId, placarDTO.getPlacarA(), 
-                placarDTO.getPlacarB());
-        redisService.armazenarJogo(jogoAtualizado);
-
-        LOGGER.info("Placar atualizado com sucesso: Jogo {} - {} x {}", 
-                jogoId, placarDTO.getPlacarA(), placarDTO.getPlacarB());
-        return jogoAtualizado;
     }
 
     /**

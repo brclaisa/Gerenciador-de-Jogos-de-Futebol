@@ -18,6 +18,7 @@ br/com/futebol/application/dto/JogoDTO.class
 br/com/futebol/application/package-info.class
 br/com/futebol/presentation/wicket/AtualizarPlacarPage$1.class
 br/com/futebol/application/dto/AtualizacaoPlacarDTO.class
+br/com/futebol/infrastructure/util/CDIProvider.class
 br/com/futebol/presentation/wicket/JogosEncerradosPage$1.class
 br/com/futebol/presentation/wicket/HomePage$3.class
 br/com/futebol/application/service/JogoService.class

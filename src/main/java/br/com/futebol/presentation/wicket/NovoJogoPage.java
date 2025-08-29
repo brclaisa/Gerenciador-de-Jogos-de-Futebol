@@ -2,6 +2,7 @@ package br.com.futebol.presentation.wicket;
 
 import br.com.futebol.application.dto.JogoDTO;
 import br.com.futebol.application.service.JogoService;
+import br.com.futebol.infrastructure.util.CDIProvider;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -29,16 +30,17 @@ public class NovoJogoPage extends WebPage {
 
     private JogoDTO jogoDTO;
     
-    // Injetar o serviço de jogos via CDI
+    // Serviço de jogos obtido via CDI
     private final JogoService jogoService;
 
     public NovoJogoPage(final PageParameters parameters) {
         super(parameters);
-
-        // Em uma implementação real com CDI funcionando, seria:
-        // @Inject private JogoService jogoService;
-        // Por enquanto, criamos uma instância diretamente
-        this.jogoService = new JogoService();
+        
+        // Obter instância do JogoService via CDI
+        this.jogoService = CDIProvider.getInstance(JogoService.class);
+        if (this.jogoService == null) {
+            throw new RuntimeException("Não foi possível obter instância do JogoService");
+        }
         
         jogoDTO = new JogoDTO();
 
