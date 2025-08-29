@@ -102,6 +102,21 @@
         .nav-links a:hover {
             background-color: #2980b9;
         }
+        .feedback {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 6px;
+        }
+        .feedback .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .feedback .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
     </style>
 </head>
 <body>
@@ -117,7 +132,10 @@
             <a href="./jogos/todos">Todos os Jogos</a>
         </div>
 
-        <form wicket:id="form">
+        <!-- Painel de feedback -->
+        <div wicket:id="feedback"></div>
+
+        <form wicket:id="formNovoJogo">
             <div class="form-group">
                 <label for="timeA">Time A:</label>
                 <input wicket:id="timeA" type="text" id="timeA" maxlength="100" required>
@@ -130,14 +148,18 @@
 
             <div class="form-group">
                 <label for="dataHoraPartida">Data e Hora da Partida:</label>
-                <input wicket:id="dataHoraPartida" type="datetime-local" id="dataHoraPartida" required>
+                <input wicket:id="dataHoraPartida" type="text" id="dataHoraPartida" placeholder="dd/MM/yyyy HH:mm" required>
             </div>
 
             <div class="form-actions">
-                <button wicket:id="btnSalvar" type="submit" class="btn btn-primary">Criar Jogo</button>
-                <a wicket:id="linkVoltar" href="#" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Criar Jogo</button>
+                <a wicket:id="linkCancelar" href="#" class="btn btn-secondary">Cancelar</a>
             </div>
         </form>
+
+        <div class="form-actions">
+            <a wicket:id="linkVoltar" href="#" class="btn btn-secondary">← Voltar ao Início</a>
+        </div>
     </div>
 </body>
 </html>
