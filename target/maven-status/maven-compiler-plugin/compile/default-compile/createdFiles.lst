@@ -8,6 +8,7 @@ br/com/futebol/presentation/wicket/EncerrarJogoPage.class
 br/com/futebol/presentation/wicket/HomePage$4.class
 br/com/futebol/presentation/wicket/TodosJogosPage$1.class
 br/com/futebol/presentation/wicket/NovoJogoPage$1.class
+br/com/futebol/infrastructure/filter/CSPFilter.class
 br/com/futebol/presentation/wicket/JogosEmAndamentoPage.class
 br/com/futebol/domain/entity/Jogo.class
 br/com/futebol/infrastructure/rest/JogoRestController.class

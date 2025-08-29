@@ -9,6 +9,7 @@
 /home/lexi/Downloads/projeto2/src/main/java/br/com/futebol/infrastructure/rest/JogoRestController.java
 /home/lexi/Downloads/projeto2/src/main/java/br/com/futebol/application/dto/AtualizacaoPlacarDTO.java
 /home/lexi/Downloads/projeto2/src/main/java/br/com/futebol/application/service/JogoService.java
+/home/lexi/Downloads/projeto2/src/main/java/br/com/futebol/infrastructure/filter/CSPFilter.java
 /home/lexi/Downloads/projeto2/src/main/java/br/com/futebol/infrastructure/messaging/RabbitMQService.java
 /home/lexi/Downloads/projeto2/src/main/java/br/com/futebol/presentation/wicket/HomePage.java
 /home/lexi/Downloads/projeto2/src/main/java/br/com/futebol/application/dto/JogoDTO.java
