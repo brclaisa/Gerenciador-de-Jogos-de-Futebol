@@ -2,21 +2,22 @@
 <jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
     <deployment>
         <dependencies>
-            <!-- Dependências do sistema -->
-            <system export="true">
-                <paths>
-                    <path name="java.util.logging"/>
-                </paths>
-            </system>
-            
-            <!-- Módulos do WildFly -->
+            <!-- Módulos do sistema -->
             <module name="org.slf4j" slot="main"/>
             <module name="org.apache.commons.logging" slot="main"/>
+            
+            <!-- Módulos JPA disponíveis no WildFly -->
+            <module name="org.hibernate" slot="main"/>
+            <module name="org.hibernate.validator" slot="main"/>
+            
+            <!-- Módulos Jakarta EE -->
+            <module name="jakarta.persistence.api" slot="main"/>
+            <module name="jakarta.transaction.api" slot="main"/>
+            <module name="jakarta.validation.api" slot="main"/>
         </dependencies>
         
-        <!-- Exclusões para evitar conflitos -->
         <exclusions>
-            <module name="org.jboss.logging"/>
+            <!-- Excluir módulos conflitantes se necessário -->
         </exclusions>
     </deployment>
 </jboss-deployment-structure>

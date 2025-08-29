@@ -49,6 +49,25 @@ public class JogoService {
     private RedisService redisService;
 
     /**
+     * Construtor para inicializar dependências quando CDI falhar
+     */
+    public JogoService() {
+        // Inicializar dependências manualmente se CDI não funcionar
+        if (jogoRepository == null) {
+            this.jogoRepository = new JogoRepository();
+            LOGGER.warn("JogoRepository inicializado manualmente - CDI não funcionou");
+        }
+        if (rabbitMQService == null) {
+            this.rabbitMQService = new RabbitMQService();
+            LOGGER.warn("RabbitMQService inicializado manualmente - CDI não funcionou");
+        }
+        if (redisService == null) {
+            this.redisService = new RedisService();
+            LOGGER.warn("RedisService inicializado manualmente - CDI não funcionou");
+        }
+    }
+
+    /**
      * Cria um novo jogo.
      * 
      * <p>Valida os dados do jogo, persiste no banco de dados,

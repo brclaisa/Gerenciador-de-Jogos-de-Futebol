@@ -74,6 +74,20 @@
             <version>2.0.7</version>
         </dependency>
 
+        <!-- JPA/Hibernate -->
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>6.2.0.Final</version>
+        </dependency>
+        
+        <!-- PostgreSQL Driver -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.6.0</version>
+        </dependency>
+
         <!-- Testes -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

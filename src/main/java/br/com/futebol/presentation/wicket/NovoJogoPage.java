@@ -2,9 +2,6 @@ package br.com.futebol.presentation.wicket;
 
 import br.com.futebol.application.dto.JogoDTO;
 import br.com.futebol.application.service.JogoService;
-import br.com.futebol.infrastructure.repository.JogoRepository;
-import br.com.futebol.infrastructure.cache.RedisService;
-import br.com.futebol.infrastructure.messaging.RabbitMQService;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -32,35 +29,16 @@ public class NovoJogoPage extends WebPage {
 
     private JogoDTO jogoDTO;
     
-    // Criar instâncias diretamente para evitar problemas de CDI
+    // Injetar o serviço de jogos via CDI
     private final JogoService jogoService;
 
     public NovoJogoPage(final PageParameters parameters) {
         super(parameters);
 
-        // Inicializar o serviço com suas dependências
-        JogoRepository jogoRepository = new JogoRepository();
-        RedisService redisService = new RedisService();
-        RabbitMQService rabbitMQService = new RabbitMQService();
-        
+        // Em uma implementação real com CDI funcionando, seria:
+        // @Inject private JogoService jogoService;
+        // Por enquanto, criamos uma instância diretamente
         this.jogoService = new JogoService();
-        // Usar reflection para injetar as dependências
-        try {
-            java.lang.reflect.Field repoField = JogoService.class.getDeclaredField("jogoRepository");
-            repoField.setAccessible(true);
-            repoField.set(jogoService, jogoRepository);
-            
-            java.lang.reflect.Field redisField = JogoService.class.getDeclaredField("redisService");
-            redisField.setAccessible(true);
-            redisField.set(jogoService, redisService);
-            
-            java.lang.reflect.Field mqField = JogoService.class.getDeclaredField("rabbitMQService");
-            mqField.setAccessible(true);
-            mqField.set(jogoService, rabbitMQService);
-        } catch (Exception e) {
-            // Em caso de erro, usar apenas o repositório em memória
-            System.err.println("Erro ao configurar dependências: " + e.getMessage());
-        }
         
         jogoDTO = new JogoDTO();
 
