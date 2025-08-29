@@ -10,6 +10,7 @@ Sistema completo de gerenciamento de partidas de futebol com atualizações em t
 - **API REST**: Endpoints completos para integração
 - **Arquitetura Limpa**: Separação clara de responsabilidades
 - **Docker Compose**: Orquestração completa dos serviços
+- **Content Security Policy**: Configuração segura de CSP
 
 ## 🏗️ Arquitetura
 
@@ -49,7 +50,6 @@ O projeto segue os princípios da **Arquitetura Limpa (Clean Architecture)** com
 - **Java 21** - Linguagem principal (LTS mais recente)
 - **Jakarta EE 10** - Plataforma empresarial
 - **Apache Wicket 10** - Framework web
-
 - **RabbitMQ 5.18** - Message broker
 - **Redis 7** - Cache em memória
 - **WildFly 37.0.0** - Servidor de aplicação Jakarta EE
@@ -86,11 +86,10 @@ docker-compose up -d
 
 ### 4. Acesse a Aplicação
 
-- **Interface Web**: http://localhost:8080
-- **API REST**: http://localhost:8080/api/jogos
+- **Interface Web (Apache Wicket)**: http://localhost:8080/gerenciador-jogos-1.0.0/
+- **API REST**: http://localhost:8080/gerenciador-jogos-1.0.0/api/jogos
 - **WildFly Management**: http://localhost:9990
 - **RabbitMQ Management**: http://localhost:15672
-
 - **Redis**: localhost:6379
 
 ## 📚 Estrutura do Projeto
@@ -110,7 +109,8 @@ src/
 │   │       │   ├── repository/   # Repositórios em memória
 │   │       │   ├── rest/         # Controladores REST
 │   │       │   ├── messaging/    # Serviços de mensageria
-│   │       │   └── cache/        # Serviços de cache
+│   │       │   ├── cache/        # Serviços de cache
+│   │       │   └── filter/       # Filtros de segurança
 │   │       └── presentation/     # Camada de apresentação
 │   │           └── wicket/       # Páginas Wicket
 │   ├── resources/                # Recursos da aplicação
@@ -118,6 +118,8 @@ src/
 │   │   ├── application.properties # Configurações da aplicação
 │   │   └── logging.properties   # Configuração de logging
 │   └── webapp/                  # Arquivos web estáticos
+│       ├── css/                 # Estilos CSS externos
+│       └── WEB-INF/            # Configurações web
 ├── test/                        # Testes unitários (estrutura preparada)
 └── wildfly-config/              # Configurações do WildFly
 ```
@@ -139,7 +141,7 @@ src/
 
 #### Criar Novo Jogo
 ```bash
-curl -X POST http://localhost:8080/api/jogos \
+curl -X POST http://localhost:8080/gerenciador-jogos-1.0.0/api/jogos \
   -H "Content-Type: application/json" \
   -d '{
     "timeA": "Flamengo",
@@ -150,7 +152,7 @@ curl -X POST http://localhost:8080/api/jogos \
 
 #### Atualizar Placar
 ```bash
-curl -X PUT http://localhost:8080/api/jogos/1/placar \
+curl -X PUT http://localhost:8080/gerenciador-jogos-1.0.0/api/jogos/1/placar \
   -H "Content-Type: application/json" \
   -d '{
     "placarA": 2,
@@ -160,7 +162,7 @@ curl -X PUT http://localhost:8080/api/jogos/1/placar \
 
 #### Encerrar Jogo
 ```bash
-curl -X PUT "http://localhost:8080/api/jogos/1/status?status=ENCERRADO"
+curl -X PUT "http://localhost:8080/gerenciador-jogos-1.0.0/api/jogos/1/status?status=ENCERRADO"
 ```
 
 ## 🎯 Funcionalidades
@@ -183,12 +185,34 @@ curl -X PUT "http://localhost:8080/api/jogos/1/status?status=ENCERRADO"
 - ✅ Encerramento de jogos
 - ✅ Listagem organizada
 - ✅ Design responsivo
+- ✅ Estilos CSS externos
 
 ### 4. Backend Robusto
 - ✅ API REST completa
 - ✅ Persistência em memória
 - ✅ Validações e tratamento de erros
 - ✅ Logging estruturado
+
+## 🔒 Segurança e CSP
+
+### Content Security Policy (CSP)
+
+O projeto implementa uma política de segurança robusta:
+
+- **Filtro CSP Personalizado**: `CSPFilter.java` para configuração flexível
+- **Estilos CSS Externos**: Arquivo `styles.css` separado para melhor segurança
+- **Configuração WildFly**: CSP automático com nonces dinâmicos
+- **Proteção contra XSS**: Bloqueio de scripts inline não autorizados
+
+### Configurações de Segurança
+
+```xml
+<!-- web.xml -->
+<filter>
+    <filter-name>CSPFilter</filter-name>
+    <filter-class>br.com.futebol.infrastructure.filter.CSPFilter</filter-class>
+</filter>
+```
 
 ## 🐳 Docker
 
@@ -197,7 +221,7 @@ curl -X PUT "http://localhost:8080/api/jogos/1/status?status=ENCERRADO"
 - **WildFly**: Servidor de aplicação Jakarta EE
 - **RabbitMQ**: Message broker para eventos
 - **Redis**: Cache em memória
-- **WildFly**: Servidor de aplicação Jakarta EE
+- **PostgreSQL**: Banco de dados (configurado para uso futuro)
 
 ### Comandos Úteis
 
@@ -216,6 +240,9 @@ docker-compose up -d --build
 
 # Limpar volumes (cuidado!)
 docker-compose down -v
+
+# Verificar status dos containers
+docker ps
 ```
 
 ## 🔧 Configuração
@@ -256,6 +283,7 @@ redis.password=
 ✅ **Compilação**: Sucesso  
 ✅ **Empacotamento**: Sucesso  
 ✅ **Validação Maven**: Sucesso  
+✅ **Type Safety**: Corrigido (warnings resolvidos)  
 ⚠️ **Checkstyle**: 830 violações (qualidade de código)  
 
 ### Executar Testes
@@ -284,7 +312,7 @@ mvn jacoco:report
 
 ### Health Checks
 
-- **Aplicação**: http://localhost:8080/health
+- **Aplicação**: http://localhost:8080/gerenciador-jogos-1.0.0/
 - **WildFly**: Verificação automática no Docker
 - **RabbitMQ**: Verificação automática no Docker
 - **Redis**: Verificação automática no Docker
@@ -336,14 +364,19 @@ docker run -p 8080:8080 futebol-app
 
 ### Status Atual
 
-O projeto está **funcionalmente correto** e pronto para uso, mas possui algumas violações de qualidade de código:
+O projeto está **funcionalmente correto** e pronto para uso, com melhorias recentes implementadas:
 
-- **830 violações de Checkstyle** identificadas
-- **Problemas principais**:
-  - Falta de Javadoc em métodos
-  - Espaços em branco no final das linhas
-  - Linhas muito longas (>80 caracteres)
-  - Problemas de formatação
+- ✅ **Type Safety**: Warnings de cast resolvidos
+- ✅ **Content Security Policy**: Configuração segura implementada
+- ✅ **Estrutura de CSS**: Estilos organizados em arquivo externo
+- ⚠️ **Checkstyle**: 830 violações (qualidade de código)
+
+### Melhorias Implementadas
+
+1. ✅ **Type Safety**: Resolvido warning de cast inseguro em `NovoJogoPage.java`
+2. ✅ **CSP**: Filtro de segurança implementado
+3. ✅ **CSS**: Estilos organizados em arquivo externo
+4. ✅ **Deploy**: Processo automatizado e documentado
 
 ### Melhorias Recomendadas
 
@@ -372,6 +405,9 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 ## 🔮 Roadmap
 
+- [x] **Corrigir warnings de Type Safety**
+- [x] **Implementar Content Security Policy**
+- [x] **Organizar estilos CSS externos**
 - [ ] **Corrigir violações de Checkstyle**
 - [ ] **Implementar testes unitários**
 - [ ] **Autenticação e autorização**
@@ -390,9 +426,20 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 | **Compilação** | ✅ Funcionando | Java 21, Maven 3.11 |
 | **Empacotamento** | ✅ Funcionando | WAR gerado com sucesso |
 | **Funcionalidade** | ✅ Funcionando | Todas as features implementadas |
+| **Type Safety** | ✅ Corrigido | Warnings resolvidos |
+| **CSP** | ✅ Implementado | Segurança configurada |
 | **Qualidade** | ⚠️ Melhorias necessárias | 830 violações de Checkstyle |
 | **Deploy** | ✅ Pronto | Docker Compose configurado |
 | **Documentação** | ✅ Atualizada | README completo |
+
+## 🆕 Últimas Atualizações
+
+### Agosto 2024
+- ✅ **Type Safety**: Corrigido warning de cast em `NovoJogoPage.java`
+- ✅ **Content Security Policy**: Implementado filtro de segurança
+- ✅ **CSS**: Estilos organizados em arquivo externo
+- ✅ **Deploy**: Processo automatizado e documentado
+- ✅ **README**: Documentação atualizada e completa
 
 ---
 
