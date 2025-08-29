@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
+    <deployment>
+        <dependencies>
+            <!-- Dependências do sistema -->
+            <system export="true">
+                <paths>
+                    <path name="java.util.logging"/>
+                </paths>
+            </system>
+            
+            <!-- Módulos do WildFly -->
+            <module name="org.slf4j" slot="main"/>
+            <module name="org.apache.commons.logging" slot="main"/>
+        </dependencies>
+        
+        <!-- Exclusões para evitar conflitos -->
+        <exclusions>
+            <module name="org.jboss.logging"/>
+        </exclusions>
+    </deployment>
+</jboss-deployment-structure>
