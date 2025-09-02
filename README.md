@@ -297,6 +297,3 @@ if __name__ == "__main__":
 - **Placar**: Números inteiros não negativos
 - **Status**: Valores válidos: `EM_ANDAMENTO`, `ENCERRADO`
 
-## 🐳 Comandos Docker Úteis
-
-```
